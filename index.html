@@ -1,4 +1,230 @@
-<script>
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Catálogo Completo de Monstruos - D&D Manual de Monstruos</title>
+    <style>
+        :root {
+            --primary: #7a200d;
+            --bg: #f4f1ea;
+            --card-bg: #ffffff;
+            --text: #2c2c2c;
+            --border: #dcd6cd;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            color: var(--primary);
+            border-bottom: 3px solid var(--primary);
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+
+        .filters {
+            background: var(--card-bg);
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .filter-group label {
+            font-weight: bold;
+            margin-bottom: 5px;
+            font-size: 0.9rem;
+            color: var(--primary);
+        }
+
+        .filter-group input, 
+        .filter-group select {
+            padding: 8px 12px;
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            font-size: 0.95rem;
+            outline: none;
+        }
+
+        .filter-group input:focus, 
+        .filter-group select:focus {
+            border-color: var(--primary);
+        }
+
+        .stats-bar {
+            margin-bottom: 15px;
+            font-size: 0.95rem;
+            font-weight: bold;
+            color: #555;
+        }
+
+        .monster-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+            gap: 20px;
+        }
+
+        .monster-card {
+            background-color: var(--card-bg);
+            border-top: 4px solid var(--primary);
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            transition: transform 0.15s ease, box-shadow 0.15s ease;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .monster-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 14px rgba(0,0,0,0.12);
+        }
+
+        .monster-image-container {
+            width: 100%;
+            height: 160px;
+            background-color: #e9e3d9;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .monster-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .monster-content {
+            padding: 12px;
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+            justify-content: space-between;
+        }
+
+        .monster-name {
+            font-size: 1rem;
+            font-weight: bold;
+            color: var(--primary);
+            margin-bottom: 6px;
+        }
+
+        .monster-info {
+            font-size: 0.85rem;
+            color: #555;
+            margin-bottom: 10px;
+        }
+
+        .tag-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 4px;
+        }
+
+        .tag {
+            display: inline-block;
+            background: #f0e6df;
+            color: var(--primary);
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: bold;
+        }
+
+        .no-results {
+            grid-column: 1 / -1;
+            text-align: center;
+            padding: 40px;
+            background: var(--card-bg);
+            border-radius: 8px;
+            color: #777;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Manual de Monstruos - Catálogo Completo</h1>
+
+    <div class="filters">
+        <div class="filter-group">
+            <label for="search-name">Buscar por Nombre:</label>
+            <input type="text" id="search-name" placeholder="Ej. Dragón, Diablo, Esqueleto...">
+        </div>
+
+        <div class="filter-group">
+            <label for="filter-habitat">Hábitat:</label>
+            <select id="filter-habitat">
+                <option value="all">Todos los hábitats</option>
+                <option value="Acuático">Acuático</option>
+                <option value="Bosque">Bosque</option>
+                <option value="Ciénaga">Ciénaga</option>
+                <option value="Colinas">Colinas</option>
+                <option value="Desierto">Desierto</option>
+                <option value="Inframundo">Inframundo / Plano Infernal</option>
+                <option value="Montaña">Montaña</option>
+                <option value="Plano Subterráneo">Plano Subterráneo</option>
+                <option value="Urbano">Urbano</option>
+            </select>
+        </div>
+
+        <div class="filter-group">
+            <label for="filter-cr">Desafío (CD / CR):</label>
+            <select id="filter-cr">
+                <option value="all">Todos los valores de desafío</option>
+                <option value="0">0</option>
+                <option value="0.125">1/8</option>
+                <option value="0.25">1/4</option>
+                <option value="0.5">1/2</option>
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+                <option value="6">6</option>
+                <option value="7">7</option>
+                <option value="8">8</option>
+                <option value="9">9</option>
+                <option value="10">10</option>
+                <option value="11">11</option>
+                <option value="12">12</option>
+                <option value="13">13</option>
+                <option value="14">14</option>
+                <option value="15">15</option>
+                <option value="16">16</option>
+                <option value="17">17</option>
+                <option value="18">18</option>
+                <option value="19">19</option>
+                <option value="20">20+</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="stats-bar" id="stats-bar">Cargando catálogo completo...</div>
+
+    <div class="monster-grid" id="monster-grid"></div>
+</div>
+    <script>
     const monsters = [
         { name: "Aboleth", cr: 10, crText: "10", habitat: "Acuático", page: 11 },
         { name: "Abominación yuan-ti", cr: 7, crText: "7", habitat: "Ciénaga", page: 345 },
@@ -352,3 +578,6 @@
         renderMonsters();
     });
 </script>
+
+</body>
+</html>
