@@ -3,119 +3,123 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Buscador de Monstruos D&D</title>
+  <title>Buscador de Monstruos D&D 5e</title>
   <style>
-    body { font-family: sans-serif; background: #121212; color: #fff; margin: 0; padding: 15px; }
-    h1 { text-align: center; color: #e74c3c; margin-top: 0; }
-    .filtros { display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px; }
-    input, select { padding: 10px; border-radius: 6px; border: 1px solid #333; background: #222; color: #fff; font-size: 16px; }
-    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 15px; }
-    .card { background: #1e1e1e; border: 1px solid #333; border-radius: 8px; overflow: hidden; padding: 15px; }
-    .card img { width: 100%; height: 200px; object-fit: contain; background: #000; border-radius: 6px; }
-    .card h2 { color: #f39c12; margin: 10px 0 5px 0; }
-    .tag { display: inline-block; background: #e74c3c; color: #fff; padding: 3px 8px; border-radius: 4px; font-size: 12px; margin-right: 5px; }
-    .stats { margin-top: 10px; font-size: 14px; color: #ccc; }
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 800px;
+      margin: 20px auto;
+      padding: 0 20px;
+      background-color: #f4f4f9;
+    }
+    h1 { color: #333; }
+    input {
+      width: 100%;
+      padding: 12px;
+      font-size: 16px;
+      box-sizing: border-box;
+      margin-bottom: 20px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+      gap: 15px;
+    }
+    .card {
+      background: #fff;
+      padding: 15px;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    .card h3 {
+      margin-top: 0;
+      color: #8b0000;
+    }
+    .card p {
+      margin: 5px 0;
+      font-size: 14px;
+      color: #555;
+    }
+    #estado {
+      font-weight: bold;
+      color: #666;
+    }
   </style>
 </head>
 <body>
 
-  <h1>Compendio de Criaturas</h1>
-
-  <!-- BUSCADOR Y FILTROS -->
-  <div class="filtros">
-    <input type="text" id="busqueda" placeholder="Buscar por nombre..." oninput="filtrar()">
-    
-    <select id="filtroTipo" onchange="filtrar()">
-      <option value="">Todos los Tipos</option>
-      <option value="Aberración">Aberración</option>
-      <option value="Feérico">Feérico</option>
-      <option value="Bestia">Bestia</option>
-    </select>
-
-    <select id="filtroHabitat" onchange="filtrar()">
-      <option value="">Todos los Hábitats</option>
-      <option value="subterraneo">Subterráneo</option>
-      <option value="bosque">Bosque</option>
-      <option value="acuatico">Acuático</option>
-    </select>
-  </div>
-
-  <!-- CONTENEDOR DE TARJETAS -->
-  <div id="resultado" class="grid"></div>
+  <h1>Bestiario D&D 5e (Español)</h1>
+  <input type="text" id="buscador" placeholder="Filtrar por nombre de monstruo..." onkeyup="filtrarMonstruos()">
+  
+  <p id="estado">Cargando monstruos...</p>
+  <div id="lista-monstruos" class="grid"></div>
 
   <script>
-    // BASE DE DATOS LOCAL (JSON en Español con enlaces a imágenes oficiales)
-    const monstruos = [
-      {
-        id_en: "aboleth",
-        nombre: "Aboleth",
-        tipo: "Aberración",
-        desafio: 10,
-        habitat: ["acuatico", "subterraneo"],
-        ca: 17,
-        pg: 135,
-        descripcion: "Una criatura anfibia prehistórica con temibles poderes psiónicos que habita en las profundidades.",
-        imagen: "https://www.dnd5eapi.co/api/images/monsters/aboleth.png"
-      },
-      {
-        id_en: "goblin",
-        nombre: "Goblin",
-        tipo: "Humanoide",
-        desafio: 0.25,
-        habitat: ["bosque", "subterraneo"],
-        ca: 15,
-        pg: 7,
-        descripcion: "Un pequeño humanoide malicioso que prefiere atacar en grupo o mediante emboscadas.",
-        imagen: "https://www.dnd5eapi.co/api/images/monsters/goblin.png"
-      }
-    ];
+    const URL_JSON = "https://raw.githubusercontent.com/ravanno/ravanno-dnd5e-es/main/compendium/dnd5e.monsters.json";
+    let monstruos = [];
 
-    function renderizar(lista) {
-      const contenedor = document.getElementById('resultado');
-      contenedor.innerHTML = '';
+    // 1. Cargar el JSON al iniciar la página
+    async function cargarMonstruos() {
+      try {
+        const respuesta = await fetch(URL_JSON);
+        if (!respuesta.ok) throw new Error("Error al obtener el archivo JSON");
+        
+        monstruos = await respuesta.json();
+        
+        document.getElementById("estado").innerText = `Total de monstruos cargados: ${monstruos.length}`;
+        mostrarMonstruos(monstruos);
+      } catch (error) {
+        console.error(error);
+        document.getElementById("estado").innerText = "Error al cargar los datos del bestiario.";
+      }
+    }
+
+    // 2. Renderizar las tarjetas en el HTML
+    function mostrarMonstruos(lista) {
+      const contenedor = document.getElementById("lista-monstruos");
+      contenedor.innerHTML = "";
 
       if (lista.length === 0) {
-        contenedor.innerHTML = '<p>No se encontraron monstruos con esos filtros.</p>';
+        contenedor.innerHTML = "<p>No se encontraron coincidencia.</p>";
         return;
       }
 
-      lista.forEach(m => {
-        contenedor.innerHTML += `
-          <div class="card">
-            <img src="${m.imagen}" alt="${m.nombre}" onerror="this.src='https://via.placeholder.com/300x200?text=Sin+Imagen'">
-            <h2>${m.nombre}</h2>
-            <div>
-              <span class="tag">${m.tipo}</span>
-              <span class="tag" style="background:#27ae60;">VD: ${m.desafio}</span>
-            </div>
-            <div class="stats">
-              <p><strong>Clase de Armadura:</strong> ${m.ca}</p>
-              <p><strong>Puntos de Golpe:</strong> ${m.pg}</p>
-              <p><strong>Hábitats:</strong> ${m.habitat.join(', ')}</p>
-              <p>${m.descripcion}</p>
-            </div>
-          </div>
+      lista.forEach(monstruo => {
+        const card = document.createElement("div");
+        card.className = "card";
+        
+        // Extraemos propiedades habituales del objeto
+        const nombre = monstruo.name || "Sin nombre";
+        const tipo = monstruo.type || "Desconocido";
+        const cr = monstruo.cr || "N/A";
+
+        card.innerHTML = `
+          <h3>${nombre}</h3>
+          <p><strong>Tipo:</strong> ${tipo}</p>
+          <p><strong>Desafío (CR):</strong> ${cr}</p>
         `;
+        
+        contenedor.appendChild(card);
       });
     }
 
-    function filtrar() {
-      const texto = document.getElementById('busqueda').value.toLowerCase();
-      const tipo = document.getElementById('filtroTipo').value;
-      const habitat = document.getElementById('filtroHabitat').value;
-
-      const filtrados = monstruos.filter(m => {
-        const coincideNombre = m.nombre.toLowerCase().includes(texto);
-        const coincideTipo = tipo === '' || m.tipo === tipo;
-        const coincideHabitat = habitat === '' || m.habitat.includes(habitat);
-        return coincideNombre && coincideTipo && coincideHabitat;
+    // 3. Función de filtro en tiempo real
+    function filtrarMonstruos() {
+      const texto = document.getElementById("buscador").value.toLowerCase();
+      
+      const filtrados = monstruos.filter(monstruo => {
+        const nombre = (monstruo.name || "").toLowerCase();
+        return nombre.includes(texto);
       });
 
-      renderizar(filtrados);
+      mostrarMonstruos(filtrados);
     }
 
-    // Carga inicial al abrir la app
-    renderizar(monstruos);
+    // Ejecutar carga de datos al abrir
+    cargarMonstruos();
   </script>
+
 </body>
 </html>
