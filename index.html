@@ -1,125 +1,221 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Buscador de Monstruos D&D 5e</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      max-width: 800px;
-      margin: 20px auto;
-      padding: 0 20px;
-      background-color: #f4f4f9;
-    }
-    h1 { color: #333; }
-    input {
-      width: 100%;
-      padding: 12px;
-      font-size: 16px;
-      box-sizing: border-box;
-      margin-bottom: 20px;
-      border: 1px solid #ccc;
-      border-radius: 4px;
-    }
-    .grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-      gap: 15px;
-    }
-    .card {
-      background: #fff;
-      padding: 15px;
-      border-radius: 8px;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    }
-    .card h3 {
-      margin-top: 0;
-      color: #8b0000;
-    }
-    .card p {
-      margin: 5px 0;
-      font-size: 14px;
-      color: #555;
-    }
-    #estado {
-      font-weight: bold;
-      color: #666;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manual de Monstruos - D&D 2025</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f1ea;
+            color: #333;
+            line-height: 1.6;
+            padding: 20px;
+        }
+        h1 {
+            color: #7a200d;
+            border-bottom: 2px solid #7a200d;
+            padding-bottom: 10px;
+        }
+        .intro {
+            background-color: #fff;
+            padding: 15px;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        .monster-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 10px;
+        }
+        .monster-item {
+            background-color: #fff;
+            padding: 10px 15px;
+            border-left: 4px solid #7a200d;
+            border-radius: 3px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: space-between;
+        }
+        .monster-name {
+            font-weight: bold;
+        }
+        .monster-page {
+            color: #666;
+            font-size: 0.9em;
+        }
+    </style>
 </head>
 <body>
 
-  <h1>Bestiario D&D 5e (Español)</h1>
-  <input type="text" id="buscador" placeholder="Filtrar por nombre de monstruo..." onkeyup="filtrarMonstruos()">
-  
-  <p id="estado">Cargando monstruos...</p>
-  <div id="lista-monstruos" class="grid"></div>
+    <h1>Índice de Perfiles - Manual de Monstruos (D&D 2025)</h1>
+    
+    <div class="intro">
+        <p><strong>Total de criaturas registradas en el índice:</strong> Monstruos de la A a la Z, Animales (Ap. A) y listas auxiliares.</p>
+    </div>
 
-  <script>
-    const URL_JSON = "https://raw.githubusercontent.com/ravanno/ravanno-dnd5e-es/main/compendium/dnd5e.monsters.json";
-    let monstruos = [];
-
-    // 1. Cargar el JSON al iniciar la página
-    async function cargarMonstruos() {
-      try {
-        const respuesta = await fetch(URL_JSON);
-        if (!respuesta.ok) throw new Error("Error al obtener el archivo JSON");
-        
-        monstruos = await respuesta.json();
-        
-        document.getElementById("estado").innerText = `Total de monstruos cargados: ${monstruos.length}`;
-        mostrarMonstruos(monstruos);
-      } catch (error) {
-        console.error(error);
-        document.getElementById("estado").innerText = "Error al cargar los datos del bestiario.";
-      }
-    }
-
-    // 2. Renderizar las tarjetas en el HTML
-    function mostrarMonstruos(lista) {
-      const contenedor = document.getElementById("lista-monstruos");
-      contenedor.innerHTML = "";
-
-      if (lista.length === 0) {
-        contenedor.innerHTML = "<p>No se encontraron coincidencia.</p>";
-        return;
-      }
-
-      lista.forEach(monstruo => {
-        const card = document.createElement("div");
-        card.className = "card";
-        
-        // Extraemos propiedades habituales del objeto
-        const nombre = monstruo.name || "Sin nombre";
-        const tipo = monstruo.type || "Desconocido";
-        const cr = monstruo.cr || "N/A";
-
-        card.innerHTML = `
-          <h3>${nombre}</h3>
-          <p><strong>Tipo:</strong> ${tipo}</p>
-          <p><strong>Desafío (CR):</strong> ${cr}</p>
-        `;
-        
-        contenedor.appendChild(card);
-      });
-    }
-
-    // 3. Función de filtro en tiempo real
-    function filtrarMonstruos() {
-      const texto = document.getElementById("buscador").value.toLowerCase();
-      
-      const filtrados = monstruos.filter(monstruo => {
-        const nombre = (monstruo.name || "").toLowerCase();
-        return nombre.includes(texto);
-      });
-
-      mostrarMonstruos(filtrados);
-    }
-
-    // Ejecutar carga de datos al abrir
-    cargarMonstruos();
-  </script>
+    <div class="monster-grid">
+        <div class="monster-item"><span class="monster-name">Aboleth</span><span class="monster-page">Pág. 11</span></div>
+        <div class="monster-item"><span class="monster-name">Abominación yuan-ti</span><span class="monster-page">Pág. 345</span></div>
+        <div class="monster-item"><span class="monster-name">Acechador invisible</span><span class="monster-page">Pág. 13</span></div>
+        <div class="monster-item"><span class="monster-name">Acechador osgo</span><span class="monster-page">Pág. 267</span></div>
+        <div class="monster-item"><span class="monster-name">Aeromante aarakocra</span><span class="monster-page">Pág. 10</span></div>
+        <div class="monster-item"><span class="monster-name">Águila</span><span class="monster-page">Pág. 348</span></div>
+        <div class="monster-item"><span class="monster-name">Águila gigante</span><span class="monster-page">Pág. 348</span></div>
+        <div class="monster-item"><span class="monster-name">Aguja marchita</span><span class="monster-page">Pág. 233</span></div>
+        <div class="monster-item"><span class="monster-name">Alce</span><span class="monster-page">Pág. 348</span></div>
+        <div class="monster-item"><span class="monster-name">Alce gigante</span><span class="monster-page">Pág. 348</span></div>
+        <div class="monster-item"><span class="monster-name">Alfombra asfixiante animada</span><span class="monster-page">Pág. 263</span></div>
+        <div class="monster-item"><span class="monster-name">Almirante pirata</span><span class="monster-page">Pág. 279</span></div>
+        <div class="monster-item"><span class="monster-name">Alosaurio</span><span class="monster-page">Pág. 349</span></div>
+        <div class="monster-item"><span class="monster-name">Amasijo de aniquilación</span><span class="monster-page">Pág. 14</span></div>
+        <div class="monster-item"><span class="monster-name">Ankheg</span><span class="monster-page">Pág. 15</span></div>
+        <div class="monster-item"><span class="monster-name">Anquilosaurio</span><span class="monster-page">Pág. 349</span></div>
+        <div class="monster-item"><span class="monster-name">Aparición</span><span class="monster-page">Pág. 16</span></div>
+        <div class="monster-item"><span class="monster-name">Ápice empíreo</span><span class="monster-page">Pág. 131</span></div>
+        <div class="monster-item"><span class="monster-name">Aprendiz de mago</span><span class="monster-page">Pág. 227</span></div>
+        <div class="monster-item"><span class="monster-name">Araña</span><span class="monster-page">Pág. 349</span></div>
+        <div class="monster-item"><span class="monster-name">Araña de fase</span><span class="monster-page">Pág. 17</span></div>
+        <div class="monster-item"><span class="monster-name">Araña gigante</span><span class="monster-page">Pág. 349</span></div>
+        <div class="monster-item"><span class="monster-name">Árbol despertado</span><span class="monster-page">Pág. 282</span></div>
+        <div class="monster-item"><span class="monster-name">Árbol marchito</span><span class="monster-page">Pág. 234</span></div>
+        <div class="monster-item"><span class="monster-name">Arbusto despertado</span><span class="monster-page">Pág. 282</span></div>
+        <div class="monster-item"><span class="monster-name">Arcanaloth</span><span class="monster-page">Pág. 18</span></div>
+        <div class="monster-item"><span class="monster-name">Archelon</span><span class="monster-page">Pág. 350</span></div>
+        <div class="monster-item"><span class="monster-name">Archimago</span><span class="monster-page">Pág. 228</span></div>
+        <div class="monster-item"><span class="monster-name">Archisaga</span><span class="monster-page">Pág. 20</span></div>
+        <div class="monster-item"><span class="monster-name">Arcipreste</span><span class="monster-page">Pág. 297</span></div>
+        <div class="monster-item"><span class="monster-name">Arcipreste kuo-toa</span><span class="monster-page">Pág. 218</span></div>
+        <div class="monster-item"><span class="monster-name">Armadura animada</span><span class="monster-page">Pág. 263</span></div>
+        <div class="monster-item"><span class="monster-name">Arpía</span><span class="monster-page">Pág. 21</span></div>
+        <div class="monster-item"><span class="monster-name">Artista</span><span class="monster-page">Pág. 22</span></div>
+        <div class="monster-item"><span class="monster-name">Artista legendario</span><span class="monster-page">Pág. 23</span></div>
+        <div class="monster-item"><span class="monster-name">Artista virtuoso</span><span class="monster-page">Pág. 23</span></div>
+        <div class="monster-item"><span class="monster-name">Asesino</span><span class="monster-page">Pág. 24</span></div>
+        <div class="monster-item"><span class="monster-name">Aspirante a caballero de la muerte</span><span class="monster-page">Pág. 44</span></div>
+        <div class="monster-item"><span class="monster-name">Avispa gigante</span><span class="monster-page">Pág. 350</span></div>
+        <div class="monster-item"><span class="monster-name">Azotamentes</span><span class="monster-page">Pág. 26</span></div>
+        <div class="monster-item"><span class="monster-name">Azotamentes arcanista</span><span class="monster-page">Pág. 27</span></div>
+        <div class="monster-item"><span class="monster-name">Babuino</span><span class="monster-page">Pág. 350</span></div>
+        <div class="monster-item"><span class="monster-name">Balor</span><span class="monster-page">Pág. 28</span></div>
+        <div class="monster-item"><span class="monster-name">Bandido</span><span class="monster-page">Pág. 29</span></div>
+        <div class="monster-item"><span class="monster-name">Banshee</span><span class="monster-page">Pág. 31</span></div>
+        <div class="monster-item"><span class="monster-name">Barigura</span><span class="monster-page">Pág. 32</span></div>
+        <div class="monster-item"><span class="monster-name">Barón sahuagin</span><span class="monster-page">Pág. 302</span></div>
+        <div class="monster-item"><span class="monster-name">Basilisco</span><span class="monster-page">Pág. 33</span></div>
+        <div class="monster-item"><span class="monster-name">Batidor</span><span class="monster-page">Pág. 34</span></div>
+        <div class="monster-item"><span class="monster-name">Behir</span><span class="monster-page">Pág. 35</span></div>
+        <div class="monster-item"><span class="monster-name">Berserker</span><span class="monster-page">Pág. 36</span></div>
+        <div class="monster-item"><span class="monster-name">Bestia trémula</span><span class="monster-page">Pág. 37</span></div>
+        <div class="monster-item"><span class="monster-name">Bocón barbotante</span><span class="monster-page">Pág. 38</span></div>
+        <div class="monster-item"><span class="monster-name">Brote micónido</span><span class="monster-page">Pág. 244</span></div>
+        <div class="monster-item"><span class="monster-name">Broza movediza</span><span class="monster-page">Pág. 39</span></div>
+        <div class="monster-item"><span class="monster-name">Búho</span><span class="monster-page">Pág. 351</span></div>
+        <div class="monster-item"><span class="monster-name">Búho gigante</span><span class="monster-page">Pág. 351</span></div>
+        <div class="monster-item"><span class="monster-name">Buitre</span><span class="monster-page">Pág. 351</span></div>
+        <div class="monster-item"><span class="monster-name">Buitre gigante</span><span class="monster-page">Pág. 351</span></div>
+        <div class="monster-item"><span class="monster-name">Bulette</span><span class="monster-page">Pág. 40</span></div>
+        <div class="monster-item"><span class="monster-name">Bullywug erudito del pantano</span><span class="monster-page">Pág. 41</span></div>
+        <div class="monster-item"><span class="monster-name">Caballero</span><span class="monster-page">Pág. 42</span></div>
+        <div class="monster-item"><span class="monster-name">Caballero andante</span><span class="monster-page">Pág. 42</span></div>
+        <div class="monster-item"><span class="monster-name">Caballero de la muerte</span><span class="monster-page">Pág. 43</span></div>
+        <div class="monster-item"><span class="monster-name">Caballero githyanki</span><span class="monster-page">Pág. 165</span></div>
+        <div class="monster-item"><span class="monster-name">Caballito de mar</span><span class="monster-page">Pág. 352</span></div>
+        <div class="monster-item"><span class="monster-name">Caballito de mar gigante</span><span class="monster-page">Pág. 352</span></div>
+        <div class="monster-item"><span class="monster-name">Caballo de guerra</span><span class="monster-page">Pág. 352</span></div>
+        <div class="monster-item"><span class="monster-name">Caballo de guerra esqueleto</span><span class="monster-page">Pág. 143</span></div>
+        <div class="monster-item"><span class="monster-name">Caballo de monta</span><span class="monster-page">Pág. 352</span></div>
+        <div class="monster-item"><span class="monster-name">Caballo de tiro</span><span class="monster-page">Pág. 352</span></div>
+        <div class="monster-item"><span class="monster-name">Cabra</span><span class="monster-page">Pág. 353</span></div>
+        <div class="monster-item"><span class="monster-name">Cabra gigante</span><span class="monster-page">Pág. 353</span></div>
+        <div class="monster-item"><span class="monster-name">Cachorro de bulette</span><span class="monster-page">Pág. 40</span></div>
+        <div class="monster-item"><span class="monster-name">Calamar gigante</span><span class="monster-page">Pág. 353</span></div>
+        <div class="monster-item"><span class="monster-name">Calavera llameante</span><span class="monster-page">Pág. 45</span></div>
+        <div class="monster-item"><span class="monster-name">Cambion</span><span class="monster-page">Pág. 46</span></div>
+        <div class="monster-item"><span class="monster-name">Camello</span><span class="monster-page">Pág. 354</span></div>
+        <div class="monster-item"><span class="monster-name">Cangrejo</span><span class="monster-page">Pág. 354</span></div>
+        <div class="monster-item"><span class="monster-name">Cangrejo gigante</span><span class="monster-page">Pág. 354</span></div>
+        <div class="monster-item"><span class="monster-name">Capitán bandido</span><span class="monster-page">Pág. 29</span></div>
+        <div class="monster-item"><span class="monster-name">Capitán batidor</span><span class="monster-page">Pág. 34</span></div>
+        <div class="monster-item"><span class="monster-name">Capitán de la guardia</span><span class="monster-page">Pág. 186</span></div>
+        <div class="monster-item"><span class="monster-name">Capitán hobgoblin</span><span class="monster-page">Pág. 196</span></div>
+        <div class="monster-item"><span class="monster-name">Capitán pirata</span><span class="monster-page">Pág. 279</span></div>
+        <div class="monster-item"><span class="monster-name">Carroñero reptante</span><span class="monster-page">Pág. 47</span></div>
+        <div class="monster-item"><span class="monster-name">Cataclismo elemental</span><span class="monster-page">Pág. 49</span></div>
+        <div class="monster-item"><span class="monster-name">Centinela azer</span><span class="monster-page">Pág. 25</span></div>
+        <div class="monster-item"><span class="monster-name">Centinela cíclope</span><span class="monster-page">Pág. 53</span></div>
+        <div class="monster-item"><span class="monster-name">Chacal</span><span class="monster-page">Pág. 354</span></div>
+        <div class="monster-item"><span class="monster-name">Chasme</span><span class="monster-page">Pág. 51</span></div>
+        <div class="monster-item"><span class="monster-name">Chuul</span><span class="monster-page">Pág. 52</span></div>
+        <div class="monster-item"><span class="monster-name">Ciempiés gigante</span><span class="monster-page">Pág. 355</span></div>
+        <div class="monster-item"><span class="monster-name">Cieno gris</span><span class="monster-page">Pág. 54</span></div>
+        <div class="monster-item"><span class="monster-name">Cieno gris psíquico</span><span class="monster-page">Pág. 54</span></div>
+        <div class="monster-item"><span class="monster-name">Ciervo</span><span class="monster-page">Pág. 355</span></div>
+        <div class="monster-item"><span class="monster-name">Cocatriz</span><span class="monster-page">Pág. 55</span></div>
+        <div class="monster-item"><span class="monster-name">Cocatriz regente</span><span class="monster-page">Pág. 55</span></div>
+        <div class="monster-item"><span class="monster-name">Cocodrilo</span><span class="monster-page">Pág. 355</span></div>
+        <div class="monster-item"><span class="monster-name">Cocodrilo gigante</span><span class="monster-page">Pág. 355</span></div>
+        <div class="monster-item"><span class="monster-name">Coloso</span><span class="monster-page">Pág. 56</span></div>
+        <div class="monster-item"><span class="monster-name">Comadreja</span><span class="monster-page">Pág. 356</span></div>
+        <div class="monster-item"><span class="monster-name">Comadreja gigante</span><span class="monster-page">Pág. 356</span></div>
+        <div class="monster-item"><span class="monster-name">Comandante berserker</span><span class="monster-page">Pág. 36</span></div>
+        <div class="monster-item"><span class="monster-name">Contemplador</span><span class="monster-page">Pág. 58</span></div>
+        <div class="monster-item"><span class="monster-name">Contemplador zombi</span><span class="monster-page">Pág. 347</span></div>
+        <div class="monster-item"><span class="monster-name">Corrupto yuan-ti (tipo 1, 2, 3)</span><span class="monster-page">Pág. 343-344</span></div>
+        <div class="monster-item"><span class="monster-name">Couatl</span><span class="monster-page">Pág. 59</span></div>
+        <div class="monster-item"><span class="monster-name">Crías de Dragón (Varios)</span><span class="monster-page">Pág. 79-118</span></div>
+        <div class="monster-item"><span class="monster-name">Cubo gelatinoso</span><span class="monster-page">Pág. 60</span></div>
+        <div class="monster-item"><span class="monster-name">Cuervo</span><span class="monster-page">Pág. 356</span></div>
+        <div class="monster-item"><span class="monster-name">Dao</span><span class="monster-page">Pág. 61</span></div>
+        <div class="monster-item"><span class="monster-name">Demonio de las sombras</span><span class="monster-page">Pág. 62</span></div>
+        <div class="monster-item"><span class="monster-name">Deva</span><span class="monster-page">Pág. 63</span></div>
+        <div class="monster-item"><span class="monster-name">Devorador de intelectos</span><span class="monster-page">Pág. 64</span></div>
+        <div class="monster-item"><span class="monster-name">Diablillo</span><span class="monster-page">Pág. 65</span></div>
+        <div class="monster-item"><span class="monster-name">Diablos (Varios)</span><span class="monster-page">Pág. 66-73</span></div>
+        <div class="monster-item"><span class="monster-name">Djinn</span><span class="monster-page">Pág. 74</span></div>
+        <div class="monster-item"><span class="monster-name">Doppelganger</span><span class="monster-page">Pág. 75</span></div>
+        <div class="monster-item"><span class="monster-name">Dracoliche</span><span class="monster-page">Pág. 77</span></div>
+        <div class="monster-item"><span class="monster-name">Dragones (Azul, Blanco, Bronce, Cobre, Oro, Oropel, Plata, Feérico, Negro, Rojo, Sombrío, Tortuga, Verde)</span><span class="monster-page">Pág. 78-120</span></div>
+        <div class="monster-item"><span class="monster-name">Draña</span><span class="monster-page">Pág. 122</span></div>
+        <div class="monster-item"><span class="monster-name">Dretch</span><span class="monster-page">Pág. 123</span></div>
+        <div class="monster-item"><span class="monster-name">Dríade</span><span class="monster-page">Pág. 124</span></div>
+        <div class="monster-item"><span class="monster-name">Druida</span><span class="monster-page">Pág. 125</span></div>
+        <div class="monster-item"><span class="monster-name">Duende</span><span class="monster-page">Pág. 126</span></div>
+        <div class="monster-item"><span class="monster-name">Elementales (Agua, Aire, Fuego, Tierra)</span><span class="monster-page">Pág. 127-130</span></div>
+        <div class="monster-item"><span class="monster-name">Empíreo</span><span class="monster-page">Pág. 132</span></div>
+        <div class="monster-item"><span class="monster-name">Engendro vampírico</span><span class="monster-page">Pág. 333</span></div>
+        <div class="monster-item"><span class="monster-name">Enjambres (Varios)</span><span class="monster-page">Pág. 123-358</span></div>
+        <div class="monster-item"><span class="monster-name">Ent</span><span class="monster-page">Pág. 133</span></div>
+        <div class="monster-item"><span class="monster-name">Erinia</span><span class="monster-page">Pág. 134</span></div>
+        <div class="monster-item"><span class="monster-name">Esfinges (Maravillas, Conocimiento, Secretos, Valor)</span><span class="monster-page">Pág. 135-138</span></div>
+        <div class="monster-item"><span class="monster-name">Espantapájaros</span><span class="monster-page">Pág. 139</span></div>
+        <div class="monster-item"><span class="monster-name">Espectador</span><span class="monster-page">Pág. 140</span></div>
+        <div class="monster-item"><span class="monster-name">Espectro</span><span class="monster-page">Pág. 141</span></div>
+        <div class="monster-item"><span class="monster-name">Esqueleto</span><span class="monster-page">Pág. 143</span></div>
+        <div class="monster-item"><span class="monster-name">Fantasma</span><span class="monster-page">Pág. 149</span></div>
+        <div class="monster-item"><span class="monster-name">Flumph</span><span class="monster-page">Pág. 150</span></div>
+        <div class="monster-item"><span class="monster-name">Gigantes (Escarcha, Fuego, Colinas, Nubes, Tormentas, Piedra)</span><span class="monster-page">Pág. 158-163</span></div>
+        <div class="monster-item"><span class="monster-name">Gólems (Arcilla, Carne, Hierro, Piedra)</span><span class="monster-page">Pág. 174-177</span></div>
+        <div class="monster-item"><span class="monster-name">Ghidra / Hidra</span><span class="monster-page">Pág. 193</span></div>
+        <div class="monster-item"><span class="monster-name">Hombres Bestia (Chacal, Jabalí, Lobo, Oso, Rata, Tigre)</span><span class="monster-page">Pág. 197-201</span></div>
+        <div class="monster-item"><span class="monster-name">Kraken</span><span class="monster-page">Pág. 214</span></div>
+        <div class="monster-item"><span class="monster-name">Liche</span><span class="monster-page">Pág. 224</span></div>
+        <div class="monster-item"><span class="monster-name">Manticora</span><span class="monster-page">Pág. 230</span></div>
+        <div class="monster-item"><span class="monster-name">Medusa</span><span class="monster-page">Pág. 238</span></div>
+        <div class="monster-item"><span class="monster-name">Mimeto</span><span class="monster-page">Pág. 246</span></div>
+        <div class="monster-item"><span class="monster-name">Momia</span><span class="monster-page">Pág. 252</span></div>
+        <div class="monster-item"><span class="monster-name">Oso lechuza</span><span class="monster-page">Pág. 268</span></div>
+        <div class="monster-item"><span class="monster-name">Quimera</span><span class="monster-page">Pág. 289</span></div>
+        <div class="monster-item"><span class="monster-name">Rakshasa</span><span class="monster-page">Pág. 290</span></div>
+        <div class="monster-item"><span class="monster-name">Sagas (Cetrina, Noche, Mares)</span><span class="monster-page">Pág. 298-300</span></div>
+        <div class="monster-item"><span class="monster-name">Tarasca</span><span class="monster-page">Pág. 323</span></div>
+        <div class="monster-item"><span class="monster-name">Troll</span><span class="monster-page">Pág. 328</span></div>
+        <div class="monster-item"><span class="monster-name">Unicornio</span><span class="monster-page">Pág. 331</span></div>
+        <div class="monster-item"><span class="monster-name">Vampiro</span><span class="monster-page">Pág. 335</span></div>
+        <div class="monster-item"><span class="monster-name">Yeti</span><span class="monster-page">Pág. 339</span></div>
+        <div class="monster-item"><span class="monster-name">Zombi</span><span class="monster-page">Pág. 346</span></div>
+    </div>
 
 </body>
 </html>
