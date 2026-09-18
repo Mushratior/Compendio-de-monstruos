@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Catálogo de Monstruos con Imágenes - D&D 2025</title>
+    <title>Catálogo Completo de Monstruos - D&D Manual de Monstruos</title>
     <style>
         :root {
             --primary: #7a200d;
@@ -35,6 +35,346 @@
 
         .filters {
             background: var(--card-bg);
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .filter-group label {
+            font-weight: bold;
+            margin-bottom: 5px;
+            font-size: 0.9rem;
+            color: var(--primary);
+        }
+
+        .filter-group input, 
+        .filter-group select {
+            padding: 8px 12px;
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            font-size: 0.95rem;
+            outline: none;
+        }
+
+        .filter-group input:focus, 
+        .filter-group select:focus {
+            border-color: var(--primary);
+        }
+
+        .stats-bar {
+            margin-bottom: 15px;
+            font-size: 0.95rem;
+            font-weight: bold;
+            color: #555;
+        }
+
+        .monster-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+            gap: 20px;
+        }
+
+        .monster-card {
+            background-color: var(--card-bg);
+            border-top: 4px solid var(--primary);
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            transition: transform 0.15s ease, box-shadow 0.15s ease;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .monster-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 14px rgba(0,0,0,0.12);
+        }
+
+        .monster-image-container {
+            width: 100%;
+            height: 160px;
+            background-color: #e9e3d9;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .monster-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .monster-content {
+            padding: 12px;
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+            justify-content: space-between;
+        }
+
+        .monster-name {
+            font-size: 1rem;
+            font-weight: bold;
+            color: var(--primary);
+            margin-bottom: 6px;
+        }
+
+        .monster-info {
+            font-size: 0.85rem;
+            color: #555;
+            margin-bottom: 10px;
+        }
+
+        .tag-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 4px;
+        }
+
+        .tag {
+            display: inline-block;
+            background: #f0e6df;
+            color: var(--primary);
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: bold;
+        }
+
+        .no-results {
+            grid-column: 1 / -1;
+            text-align: center;
+            padding: 40px;
+            background: var(--card-bg);
+            border-radius: 8px;
+            color: #777;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Manual de Monstruos - Catálogo Completo</h1>
+
+    <div class="filters">
+        <div class="filter-group">
+            <label for="search-name">Buscar por Nombre:</label>
+            <input type="text" id="search-name" placeholder="Ej. Dragón, Diablo, Esqueleto...">
+        </div>
+
+        <div class="filter-group">
+            <label for="filter-habitat">Hábitat:</label>
+            <select id="filter-habitat">
+                <option value="all">Todos los hábitats</option>
+                <option value="Acuático">Acuático</option>
+                <option value="Bosque">Bosque</option>
+                <option value="Ciénaga">Ciénaga</option>
+                <option value="Colinas">Colinas</option>
+                <option value="Desierto">Desierto</option>
+                <option value="Inframundo">Inframundo / Plano Infernal</option>
+                <option value="Montaña">Montaña</option>
+                <option value="Plano Subterráneo">Plano Subterráneo</option>
+                <option value="Urbano">Urbano</option>
+            </select>
+        </div>
+
+        <div class="filter-group">
+            <label for="filter-cr">Desafío (CD / CR):</label>
+            <select id="filter-cr">
+                <option value="all">Todos los valores de desafío</option>
+                <option value="0">0</option>
+                <option value="0.125">1/8</option>
+                <option value="0.25">1/4</option>
+                <option value="0.5">1/2</option>
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+                <option value="6">6</option>
+                <option value="7">7</option>
+                <option value="8">8</option>
+                <option value="9">9</option>
+                <option value="10">10</option>
+                <option value="11">11</option>
+                <option value="12">12</option>
+                <option value="13">13</option>
+                <option value="14">14</option>
+                <option value="15">15</option>
+                <option value="16">16</option>
+                <option value="17">17</option>
+                <option value="18">18</option>
+                <option value="19">19</option>
+                <option value="20">20+</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="stats-bar" id="stats-bar">Cargando catálogo completo...</div>
+
+    <div class="monster-grid" id="monster-grid"></div>
+</div>
+
+<script>
+    const monsters = [
+        { name: "Aboleth", cr: 10, crText: "10", habitat: "Acuático", page: 11 },
+        { name: "Abominación yuan-ti", cr: 7, crText: "7", habitat: "Ciénaga", page: 345 },
+        { name: "Acechador invisible", cr: 6, crText: "6", habitat: "Urbano", page: 13 },
+        { name: "Acechador osgo", cr: 3, crText: "3", habitat: "Inframundo", page: 267 },
+        { name: "Aeromante aarakocra", cr: 2, crText: "2", habitat: "Montaña", page: 10 },
+        { name: "Águila", cr: 0, crText: "0", habitat: "Montaña", page: 348 },
+        { name: "Águila gigante", cr: 1, crText: "1", habitat: "Montaña", page: 348 },
+        { name: "Aguja marchita", cr: 0.25, crText: "1/4", habitat: "Bosque", page: 233 },
+        { name: "Alce", cr: 0.25, crText: "1/4", habitat: "Bosque", page: 348 },
+        { name: "Alce gigante", cr: 2, crText: "2", habitat: "Bosque", page: 348 },
+        { name: "Alfombra asfixiante animada", cr: 2, crText: "2", habitat: "Urbano", page: 263 },
+        { name: "Almirante pirata", cr: 10, crText: "10", habitat: "Acuático", page: 279 },
+        { name: "Alosaurio", cr: 2, crText: "2", habitat: "Bosque", page: 349 },
+        { name: "Amasijo de aniquilación", cr: 13, crText: "13", habitat: "Inframundo", page: 14 },
+        { name: "Ankheg", cr: 2, crText: "2", habitat: "Bosque", page: 15 },
+        { name: "Anquilosaurio", cr: 3, crText: "3", habitat: "Bosque", page: 349 },
+        { name: "Aparición", cr: 5, crText: "5", habitat: "Inframundo", page: 16 },
+        { name: "Ápice empíreo", cr: 23, crText: "23", habitat: "Montaña", page: 131 },
+        { name: "Aprendiz de mago", cr: 0.25, crText: "1/4", habitat: "Urbano", page: 227 },
+        { name: "Araña", cr: 0, crText: "0", habitat: "Bosque", page: 349 },
+        { name: "Araña de fase", cr: 3, crText: "3", habitat: "Plano Subterráneo", page: 17 },
+        { name: "Araña gigante", cr: 1, crText: "1", habitat: "Bosque", page: 349 },
+        { name: "Árbol despertado", cr: 2, crText: "2", habitat: "Bosque", page: 282 },
+        { name: "Árbol marchito", cr: 2, crText: "2", habitat: "Bosque", page: 234 },
+        { name: "Arbusto despertado", cr: 0, crText: "0", habitat: "Bosque", page: 282 },
+        { name: "Arcanaloth", cr: 12, crText: "12", habitat: "Inframundo", page: 18 },
+        { name: "Archelon", cr: 3, crText: "3", habitat: "Acuático", page: 350 },
+        { name: "Archimago", cr: 12, crText: "12", habitat: "Urbano", page: 228 },
+        { name: "Archisaga", cr: 15, crText: "15", habitat: "Bosque", page: 20 },
+        { name: "Arcipreste", cr: 9, crText: "9", habitat: "Urbano", page: 297 },
+        { name: "Arcipreste kuo-toa", cr: 6, crText: "6", habitat: "Acuático", page: 218 },
+        { name: "Armadura animada", cr: 1, crText: "1", habitat: "Urbano", page: 263 },
+        { name: "Arpía", cr: 1, crText: "1", habitat: "Montaña", page: 21 },
+        { name: "Artista", cr: 0.125, crText: "1/8", habitat: "Urbano", page: 22 },
+        { name: "Artista legendario", cr: 4, crText: "4", habitat: "Urbano", page: 23 },
+        { name: "Artista virtuoso", cr: 2, crText: "2", habitat: "Urbano", page: 23 },
+        { name: "Asesino", cr: 8, crText: "8", habitat: "Urbano", page: 24 },
+        { name: "Aspirante a caballero de la muerte", cr: 6, crText: "6", habitat: "Inframundo", page: 44 },
+        { name: "Avispa gigante", cr: 0.5, crText: "1/2", habitat: "Bosque", page: 350 },
+        { name: "Azotamentes", cr: 7, crText: "7", habitat: "Plano Subterráneo", page: 26 },
+        { name: "Azotamentes arcanista", cr: 8, crText: "8", habitat: "Plano Subterráneo", page: 27 },
+        { name: "Babuino", cr: 0, crText: "0", habitat: "Bosque", page: 350 },
+        { name: "Balor", cr: 19, crText: "19", habitat: "Inframundo", page: 28 },
+        { name: "Bandido", cr: 0.125, crText: "1/8", habitat: "Urbano", page: 29 },
+        { name: "Banshee", cr: 4, crText: "4", habitat: "Bosque", page: 31 },
+        { name: "Barigura", cr: 5, crText: "5", habitat: "Inframundo", page: 32 },
+        { name: "Barón sahuagin", cr: 5, crText: "5", habitat: "Acuático", page: 302 },
+        { name: "Basilisco", cr: 3, crText: "3", habitat: "Plano Subterráneo", page: 33 },
+        { name: "Batidor", cr: 0.5, crText: "1/2", habitat: "Bosque", page: 34 },
+        { name: "Behir", cr: 11, crText: "11", habitat: "Montaña", page: 35 },
+        { name: "Berserker", cr: 2, crText: "2", habitat: "Montaña", page: 36 },
+        { name: "Bestia trémula", cr: 3, crText: "3", habitat: "Bosque", page: 37 },
+        { name: "Bocón barbotante", cr: 2, crText: "2", habitat: "Plano Subterráneo", page: 38 },
+        { name: "Brote micónido", cr: 0, crText: "0", habitat: "Plano Subterráneo", page: 244 },
+        { name: "Broza movediza", cr: 5, crText: "5", habitat: "Ciénaga", page: 39 },
+        { name: "Búho", cr: 0, crText: "0", habitat: "Bosque", page: 351 },
+        { name: "Búho gigante", cr: 0.25, crText: "1/4", habitat: "Bosque", page: 351 },
+        { name: "Buitre", cr: 0, crText: "0", habitat: "Desierto", page: 351 },
+        { name: "Buitre gigante", cr: 1, crText: "1", habitat: "Desierto", page: 351 },
+        { name: "Bulette", cr: 5, crText: "5", habitat: "Colinas", page: 40 },
+        { name: "Bullywug erudito del pantano", cr: 2, crText: "2", habitat: "Ciénaga", page: 41 },
+        { name: "Caballero", cr: 3, crText: "3", habitat: "Urbano", page: 42 },
+        { name: "Caballero andante", cr: 3, crText: "3", habitat: "Urbano", page: 42 },
+        { name: "Caballero de la muerte", cr: 17, crText: "17", habitat: "Inframundo", page: 43 },
+        { name: "Caballero githyanki", cr: 8, crText: "8", habitat: "Inframundo", page: 165 },
+        { name: "Caballito de mar", cr: 0, crText: "0", habitat: "Acuático", page: 352 },
+        { name: "Caballito de mar gigante", cr: 0.5, crText: "1/2", habitat: "Acuático", page: 352 },
+        { name: "Caballo de guerra", cr: 0.5, crText: "1/2", habitat: "Urbano", page: 352 },
+        { name: "Caballo de guerra esqueleto", cr: 0.5, crText: "1/2", habitat: "Inframundo", page: 143 },
+        { name: "Caballo de monta", cr: 0.25, crText: "1/4", habitat: "Urbano", page: 352 },
+        { name: "Caballo de tiro", cr: 0.25, crText: "1/4", habitat: "Urbano", page: 352 },
+        { name: "Cabra", cr: 0, crText: "0", habitat: "Montaña", page: 353 },
+        { name: "Cabra gigante", cr: 0.5, crText: "1/2", habitat: "Montaña", page: 353 },
+        { name: "Cachorro de bulette", cr: 1, crText: "1", habitat: "Colinas", page: 40 },
+        { name: "Calamar gigante", cr: 1, crText: "1", habitat: "Acuático", page: 353 },
+        { name: "Calavera llameante", cr: 4, crText: "4", habitat: "Plano Subterráneo", page: 45 },
+        { name: "Cambion", cr: 5, crText: "5", habitat: "Inframundo", page: 46 },
+        { name: "Camello", cr: 0.125, crText: "1/8", habitat: "Desierto", page: 354 },
+        { name: "Cangrejo", cr: 0, crText: "0", habitat: "Acuático", page: 354 },
+        { name: "Cangrejo gigante", cr: 0.125, crText: "1/8", habitat: "Acuático", page: 354 },
+        { name: "Capitán bandido", cr: 2, crText: "2", habitat: "Urbano", page: 29 },
+        { name: "Capitán batidor", cr: 3, crText: "3", habitat: "Bosque", page: 34 },
+        { name: "Capitán de la guardia", cr: 3, crText: "3", habitat: "Urbano", page: 186 },
+        { name: "Capitán hobgoblin", cr: 3, crText: "3", habitat: "Colinas", page: 196 },
+        { name: "Capitán pirata", cr: 2, crText: "2", habitat: "Acuático", page: 279 },
+        { name: "Carroñero reptante", cr: 2, crText: "2", habitat: "Plano Subterráneo", page: 47 },
+        { name: "Cataclismo elemental", cr: 18, crText: "18", habitat: "Desierto", page: 49 },
+        { name: "Centinela azer", cr: 2, crText: "2", habitat: "Montaña", page: 25 },
+        { name: "Centinela cíclope", cr: 6, crText: "6", habitat: "Montaña", page: 53 },
+        { name: "Chacal", cr: 0, crText: "0", habitat: "Desierto", page: 354 },
+        { name: "Chasme", cr: 6, crText: "6", habitat: "Inframundo", page: 51 },
+        { name: "Chuul", cr: 4, crText: "4", habitat: "Acuático", page: 52 },
+        { name: "Ciempiés gigante", cr: 0.25, crText: "1/4", habitat: "Plano Subterráneo", page: 355 },
+        { name: "Cieno gris", cr: 0.5, crText: "1/2", habitat: "Plano Subterráneo", page: 54 },
+        { name: "Cieno gris psíquico", cr: 1, crText: "1", habitat: "Plano Subterráneo", page: 54 },
+        { name: "Ciervo", cr: 0, crText: "0", habitat: "Bosque", page: 355 },
+        { name: "Cocatriz", cr: 0.5, crText: "1/2", habitat: "Ciénaga", page: 55 },
+        { name: "Cocatriz regente", cr: 3, crText: "3", habitat: "Ciénaga", page: 55 },
+        { name: "Cocodrilo", cr: 0.5, crText: "1/2", habitat: "Ciénaga", page: 355 },
+        { name: "Cocodrilo gigante", cr: 5, crText: "5", habitat: "Ciénaga", page: 355 },
+        { name: "Coloso", cr: 16, crText: "16", habitat: "Urbano", page: 56 },
+        { name: "Comadreja", cr: 0, crText: "0", habitat: "Bosque", page: 356 },
+        { name: "Comadreja gigante", cr: 0.125, crText: "1/8", habitat: "Bosque", page: 356 },
+        { name: "Comandante berserker", cr: 5, crText: "5", habitat: "Montaña", page: 36 },
+        { name: "Contemplador", cr: 13, crText: "13", habitat: "Plano Subterráneo", page: 58 },
+        { name: "Contemplador zombi", cr: 5, crText: "5", habitat: "Plano Subterráneo", page: 347 },
+        { name: "Corrupto yuan-ti (tipo 1)", cr: 3, crText: "3", habitat: "Ciénaga", page: 343 },
+        { name: "Corrupto yuan-ti (tipo 2)", cr: 4, crText: "4", habitat: "Ciénaga", page: 344 },
+        { name: "Corrupto yuan-ti (tipo 3)", cr: 5, crText: "5", habitat: "Ciénaga", page: 344 },
+        { name: "Couatl", cr: 4, crText: "4", habitat: "Bosque", page: 59 },
+        { name: "Cubo gelatinoso", cr: 2, crText: "2", habitat: "Plano Subterráneo", page: 60 },
+        { name: "Cuervo", cr: 0, crText: "0", habitat: "Bosque", page: 356 },
+        { name: "Dao", cr: 11, crText: "11", habitat: "Montaña", page: 61 },
+        { name: "Demonio de las sombras", cr: 4, crText: "4", habitat: "Inframundo", page: 62 },
+        { name: "Deva", cr: 10, crText: "10", habitat: "Montaña", page: 63 },
+        { name: "Devorador de intelectos", cr: 2, crText: "2", habitat: "Plano Subterráneo", page: 64 },
+        { name: "Diablillo", cr: 1, crText: "1", habitat: "Urbano", page: 65 },
+        { name: "Diablo astado", cr: 11, crText: "11", habitat: "Inframundo", page: 66 },
+        { name: "Diablo barbado", cr: 3, crText: "3", habitat: "Inframundo", page: 67 },
+        { name: "Diablo de las cadenas", cr: 8, crText: "8", habitat: "Inframundo", page: 69 },
+        { name: "Diablo de la sima", cr: 20, crText: "20", habitat: "Inframundo", page: 68 },
+        { name: "Diablo espinoso", cr: 2, crText: "2", habitat: "Inframundo", page: 70 },
+        { name: "Diablo gélido", cr: 14, crText: "14", habitat: "Inframundo", page: 71 },
+        { name: "Diablo óseo", cr: 9, crText: "9", habitat: "Inframundo", page: 72 },
+        { name: "Diablo punzante", cr: 5, crText: "5", habitat: "Inframundo", page: 73 },
+        { name: "Djinn", cr: 11, crText: "11", habitat: "Desierto", page: 74 },
+        { name: "Dominaolas sirénido", cr: 2, crText: "2", habitat: "Acuático", page: 314 },
+        { name: "Doppelganger", cr: 3, crText: "3", habitat: "Urbano", page: 75 },
+        { name: "Dracoliche", cr: 17, crText: "17", habitat: "Inframundo", page: 77 },
+        { name: "Dracomante githyanki", cr: 9, crText: "9", habitat: "Inframundo", page: 165 },
+        { name: "Dragón azul adulto", cr: 16, crText: "16", habitat: "Desierto", page: 80 },
+        { name: "Dragón azul anciano", cr: 23, crText: "23", habitat: "Desierto", page: 81 },
+        { name: "Dragón azul joven", cr: 9, crText: "9", habitat: "Desierto", page: 79 },
+        { name: "Dragón blanco adulto", cr: 13, crText: "13", habitat: "Montaña", page: 84 },
+        { name: "Dragón blanco anciano", cr: 20, crText: "20", habitat: "Montaña", page: 85 },
+        { name: "Dragón blanco joven", cr: 6, crText: "6", habitat: "Montaña", page: 83 },
+        { name: "Dragón de bronce adulto", cr: 15, crText: "15", habitat: "Acuático", page: 88 },
+        { name: "Dragón de bronce anciano", cr: 22, crText: "22", habitat: "Acuático", page: 89 },
+        { name: "Dragón de bronce joven", cr: 8, crText: "8", habitat: "Acuático", page: 87 },
+        { name: "Dragón de cobre adulto", cr: 14, crText: "14", habitat: "Colinas", page: 92 },
+        { name: "Dragón de cobre anciano", cr: 21, crText: "21", habitat: "Colinas", page: 93 },
+        { name: "Dragón de cobre joven", cr: 7, crText: "7", habitat: "Colinas", page: 91 },
+        { name: "Dragón de oro adulto", cr: 17, crText: "17", habitat: "Montaña", page: 96 },
+        { name: "Dragón de oro anciano", cr: 24, crText: "24", habitat: "Montaña", page: 97 },
+        { name: "Dragón de oro joven", cr: 10, crText: "10", habitat: "Montaña", page: 95 },
+        { name: "Dragón de oropel adulto", cr: 13, crText: "13", habitat: "Desierto", page: 100 },
+        { name: "Dragón de oropel anciano", cr: 20, crText: "20", habitat: "Desierto", page: 101 },
+        { name: "Dragón de oropel joven", cr: 6, crText: "6", habita            background: var(--card-bg);
             padding: 20px;
             border-radius: 8px;
             box-shadow: 0 2px 8px rgba(0,0,0,0.08);
