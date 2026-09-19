@@ -59,7 +59,6 @@
             }
         }
 
-        /* Sidebar / Lista */
         .sidebar {
             background-color: var(--card-bg);
             border: 1px solid var(--border-color);
@@ -120,7 +119,6 @@
             font-weight: bold;
         }
 
-        /* Ficha Técnica (Statblock) */
         .statblock-container {
             background-color: var(--card-bg);
             border: 2px solid var(--border-color);
@@ -244,7 +242,7 @@
 <div class="container">
     <header>
         <h1>Compendio de Monstruos D&D 5e</h1>
-        <div class="subtitle">Traducción Técnica Integrada (Open5e v1 API)</div>
+        <div class="subtitle">Traducción Técnica Integrada (Open5e API)</div>
     </header>
 
     <div class="app-layout">
@@ -266,7 +264,6 @@
 let searchTimeout = null;
 let currentMonsters = [];
 
-// 1. Diccionario de Alineamientos
 const alignmentsDict = {
     "lawful good": "Legal Bueno",
     "neutral good": "Neutral Bueno",
@@ -281,129 +278,24 @@ const alignmentsDict = {
     "any alignment": "Cualquier Alineamiento"
 };
 
-// 2. Diccionario ampliado de nombres de monstruos
 const monsterNamesDict = {
     "Skeleton": "Esqueleto",
-    "Warhorse Skeleton": "Esqueleto de Caballo de Guerra",
     "Zombie": "Zombi",
-    "Ogre Zombie": "Zombi Ogro",
     "Ghoul": "Ghul",
-    "Ghast": "Ghast",
     "Specter": "Espectro",
     "Shadow": "Sombra",
     "Wight": "Tumulario",
-    "Wraith": "Sombra Espectral / Wraith",
     "Mummy": "Momia",
-    "Mummy Lord": "Señor de las Momias",
     "Lich": "Liche",
     "Vampire": "Vampiro",
-    "Vampire Spawn": "Progenie Vampírica",
-    "Will-o'-Wisp": "Fatuo",
-    "Banshee": "Banshee",
     "Ghost": "Fantasma",
-    "Flameskull": "Calavera Flameante",
-    "Crawling Claw": "Garra Trepadora",
-    "Minotaur Skeleton": "Esqueleto de Minotauro",
-    "Adult Black Dragon": "Dragón Negro Adulto",
-    "Adult Blue Dragon": "Dragón Azul Adulto",
-    "Adult Brass Dragon": "Dragón de Latón Adulto",
-    "Adult Bronze Dragon": "Dragón de Bronce Adulto",
-    "Adult Copper Dragon": "Dragón de Cobre Adulto",
-    "Adult Gold Dragon": "Dragón Dorado Adulto",
-    "Adult Green Dragon": "Dragón Verde Adulto",
-    "Adult Red Dragon": "Dragón Rojo Adulto",
-    "Adult Silver Dragon": "Dragón de Plata Adulto",
-    "Adult White Dragon": "Dragón Blanco Adulto",
-    "Ancient Black Dragon": "Dragón Negro Anciano",
-    "Ancient Blue Dragon": "Dragón Azul Anciano",
-    "Young Black Dragon": "Dragón Negro Joven",
-    "Young Blue Dragon": "Dragón Azul Joven",
-    "Young Green Dragon": "Dragón Verde Joven",
-    "Young Red Dragon": "Dragón Rojo Joven",
-    "Young White Dragon": "Dragón Blanco Joven",
-    "Dragon Turtle": "Tortuga Dragón",
-    "Wyvern": "Güiverno",
-    "Acolyte": "Acólito",
-    "Archmage": "Archimago",
-    "Bandit": "Bandido",
-    "Bandit Captain": "Capitán Bandido",
-    "Berserker": "Berserker",
-    "Cultist": "Cultista",
-    "Cult Fanatic": "Fanático Cultista",
-    "Drow": "Drow",
-    "Duergar": "Duergar",
-    "Gnoll": "Gnoll",
     "Goblin": "Goblin",
-    "Grimlock": "Grimlock",
-    "Hobgoblin": "Hobgoblin",
-    "Kobold": "Kobold",
-    "Knight": "Caballero",
-    "Mage": "Mago",
     "Orc": "Orco",
-    "Priest": "Sacerdote",
-    "Scout": "Explorador",
-    "Thug": "Matón",
-    "Aboleth": "Aboleth",
-    "Basilisk": "Basilisco",
-    "Behir": "Behir",
-    "Black Bear": "Oso Negro",
-    "Blink Dog": "Perro Parpadeante",
-    "Blood Hawk": "Halcón Sangriento",
-    "Boar": "Jabalí",
-    "Bugbear": "Osnogoblin",
-    "Bulette": "Bulette",
-    "Centaur": "Centauro",
-    "Chimera": "Quimera",
-    "Cockatrice": "Cocatriz",
-    "Couatl": "Couatl",
-    "Darkmantle": "Manto Oscuro",
-    "Dire Wolf": "Lobo Terrible",
-    "Doppelganger": "Doppelgänger",
-    "Draft Horse": "Caballo de Tiro",
-    "Dryad": "Dríade",
-    "Ettin": "Ettin",
-    "Gargoyle": "Gárgola",
-    "Gelatinous Cube": "Cubo Gelatinoso",
-    "Giant Ape": "Mono Gigante",
-    "Giant Badger": "Tejón Gigante",
-    "Giant Bat": "Murciélago Gigante",
-    "Giant Boar": "Jabalí Gigante",
-    "Giant Centipede": "Ciempiés Gigante",
-    "Giant Eagle": "Águila Gigante",
-    "Giant Fire Beetle": "Escarabajo de Fuego Gigante",
-    "Giant Frog": "Rana Gigante",
-    "Giant Goat": "Cabra Gigante",
-    "Giant Hyena": "Hiena Gigante",
-    "Giant Lizard": "Lagarto Gigante",
-    "Giant Octopus": "Pulpo Gigante",
-    "Giant Owl": "Búho Gigante",
-    "Giant Poisonous Snake": "Serpiente Venenosa Gigante",
-    "Giant Rat": "Rata Gigante",
-    "Giant Spider": "Araña Gigante",
-    "Giant Toad": "Sapo Gigante",
-    "Giant Wasp": "Avispa Gigante",
-    "Giant Wolf Spider": "Araña Lobo Gigante",
-    "Gorgon": "Gorgona",
-    "Grick": "Grick",
-    "Griffon": "Grifo",
-    "Harpy": "Arpía",
-    "Hell Hound": "Sabueso del Infierno",
-    "Hippogriff": "Hipogrifo",
-    "Hydra": "Hidra",
-    "Kraken": "Kraken",
-    "Manticore": "Mantícora",
-    "Medusa": "Medusa",
-    "Minotaur": "Minotauro",
     "Ogre": "Ogro",
-    "Otyugh": "Otyugh",
-    "Owlbear": "Osobúho",
-    "Pegasus": "Pégaso",
-    "Roc": "Roc",
     "Troll": "Trol",
     "Wolf": "Lobo"
 };
 
-// 3. Diccionario de términos generales
 const dndDictionary = {
     "aberration": "Aberración",
     "beast": "Bestia",
@@ -411,7 +303,6 @@ const dndDictionary = {
     "construct": "Constructo",
     "dragon": "Dragón",
     "elemental": "Elemental",
-    "fey": "Incorpóreo/Hada",
     "fiend": "Infernal",
     "giant": "Gigante",
     "humanoid": "Humanoide",
@@ -424,59 +315,7 @@ const dndDictionary = {
     "Medium": "Mediano",
     "Large": "Grande",
     "Huge": "Enorme",
-    "Gargantuan": "Gargantesco",
-    "natural armor": "armadura natural",
-    "shield": "escudo",
-    "leather armor": "armadura de cuero",
-    "studded leather": "cuero tachonado",
-    "studded leather armor": "armadura de cuero tachonado",
-    "hide armor": "armadura de pieles",
-    "chain shirt": "camisote de malla",
-    "scale mail": "cota de escamas",
-    "breastplate": "peto",
-    "half plate": "semiplacas",
-    "ring mail": "cota de anillas",
-    "chain mail": "cota de malla",
-    "splint armor": "armadura de bandas",
-    "plate armor": "armadura de placas",
-    "plate": "placas",
-    "padded armor": "armadura acolchada",
-    "padded": "acolchado",
-    "light armor": "armadura ligera",
-    "medium armor": "armadura media",
-    "heavy armor": "armadura pesada",
-    "clothes": "ropas",
-    "clothing": "vestimenta",
-    "unarmored": "sin armadura",
-    "darkvision": "visión en la oscuridad",
-    "blindsight": "visión a ciegas",
-    "tremorsense": "percepción de la vibración",
-    "truesight": "visión verdadera",
-    "passive Perception": "Percepción pasiva",
-    "telepathy": "telepatía",
-    "understands": "entiende",
-    "but can't speak": "pero no puede hablar",
-    "all": "todos",
-    "Common": "Común",
-    "Elvish": "Élfico",
-    "Dwarvish": "Enano",
-    "Draconic": "Dracónico",
-    "Infernal": "Infernal",
-    "Abyssal": "Abisal",
-    "Goblin": "Goblin",
-    "Orc": "Orco",
-    "Multiattack": "Multiataque",
-    "Bite": "Mordisco",
-    "Claw": "Garra",
-    "Claws": "Garras",
-    "Tail": "Cola",
-    "Gore": "Cornada",
-    "Slam": "Golpe",
-    "Greatsword": "Espadón",
-    "Undead Fortitude": "Fortaleza de No-muerto",
-    "Turn Resistance": "Resistencia a Expulsión",
-    "Sunlight Sensitivity": "Sensibilidad a la Luz Solar",
-    "Life Drain": "Drenaje de Vida"
+    "Gargantuan": "Gargantesco"
 };
 
 function translateMonsterName(name) {
@@ -495,14 +334,47 @@ function formatMod(score) {
     return `${score} (${mod >= 0 ? '+' + mod : mod})`;
 }
 
+function formatSpeed(speedObj) {
+    if (!speedObj) return '0 pies';
+    if (typeof speedObj === 'string') return speedObj;
+    let parts = [];
+    if (speedObj.walk) parts.push(`${speedObj.walk} pies`);
+    if (speedObj.fly) parts.push(`vuelo ${speedObj.fly} pies`);
+    if (speedObj.swim) parts.push(`natación ${speedObj.swim} pies`);
+    if (speedObj.climb) parts.push(`escalada ${speedObj.climb} pies`);
+    if (speedObj.burrow) parts.push(`excavar ${speedObj.burrow} pies`);
+    return parts.join(', ') || '0 pies';
+}
+
+async function translate(text) {
+    if (!text || text.trim() === '') return '';
+    try {
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 3000); // 3s timeout por seguridad
+        
+        const res = await fetch(`https://api.mymemory.translated.net/get?q=${encodeURIComponent(text.substring(0, 450))}&langpair=en|es`, {
+            signal: controller.signal
+        });
+        clearTimeout(timeoutId);
+        
+        if (!res.ok) return text;
+        const data = await res.json();
+        return data.responseData?.translatedText || text;
+    } catch (e) {
+        // En caso de bloqueo CORS o Timeout, devuelve el texto original en inglés sin romper la UI
+        return text;
+    }
+}
+
 async function fetchMonsterList(query = '') {
     const listElement = document.getElementById('monsterList');
     listElement.innerHTML = '<li class="monster-item">Cargando resultados...</li>';
 
     try {
+        // Usamos la API v1 con búsqueda universal por texto
         const url = query 
-            ? `https://api.open5e.com/v1/monsters/?search=${encodeURIComponent(query)}&limit=30`
-            : `https://api.open5e.com/v1/monsters/?limit=30`;
+            ? `https://api.open5e.com/v1/monsters/?search=${encodeURIComponent(query)}&limit=40`
+            : `https://api.open5e.com/v1/monsters/?limit=40`;
         
         const response = await fetch(url);
         if (!response.ok) throw new Error("Error en la respuesta de la red");
@@ -520,12 +392,9 @@ async function fetchMonsterList(query = '') {
             const translatedName = translateMonsterName(monster.name);
             const li = document.createElement('li');
             li.className = 'monster-item';
-            li.id = `item-${monster.slug}`;
+            li.setAttribute('data-slug', monster.slug);
             
-            // Asignar evento click directamente
-            li.addEventListener('click', () => {
-                loadAndTranslateMonster(monster.slug);
-            });
+            li.onclick = () => loadAndTranslateMonster(monster.slug);
 
             li.innerHTML = `
                 <span>${translatedName}</span>
@@ -540,94 +409,38 @@ async function fetchMonsterList(query = '') {
     }
 }
 
-async function fetchSingleChunkTranslation(chunk) {
-    if (!chunk || chunk.trim() === '') return '';
-    try {
-        const res = await fetch(`https://api.mymemory.translated.net/get?q=${encodeURIComponent(chunk)}&langpair=en|es`);
-        const data = await res.json();
-        return data.responseData?.translatedText || chunk;
-    } catch (e) {
-        return chunk;
-    }
-}
-
-async function translate(text) {
-    if (!text || text.trim() === '') return '';
-    
-    if (text.length <= 450) {
-        return await fetchSingleChunkTranslation(text);
-    }
-
-    const sentences = text.match(/[^.!?]+[.!?]+/g) || [text];
-    let chunks = [];
-    let currentChunk = "";
-
-    for (const sentence of sentences) {
-        if ((currentChunk + sentence).length > 400) {
-            chunks.push(currentChunk.trim());
-            currentChunk = sentence;
-        } else {
-            currentChunk += " " + sentence;
-        }
-    }
-    if (currentChunk.trim() !== "") {
-        chunks.push(currentChunk.trim());
-    }
-
-    const translatedChunks = await Promise.all(
-        chunks.map(chunk => fetchSingleChunkTranslation(chunk))
-    );
-
-    return translatedChunks.join(" ");
-}
-
-function replaceTechnicalTerms(str) {
-    if (!str) return '—';
-    let result = str;
-    for (const [key, val] of Object.entries(dndDictionary)) {
-        const regex = new RegExp(`\\b${key}\\b`, 'gi');
-        result = result.replace(regex, val);
-    }
-    return result;
-}
-
 async function loadAndTranslateMonster(slug) {
     const monster = currentMonsters.find(m => m.slug === slug);
     if (!monster) return;
 
+    // Actualizar selección visual
     document.querySelectorAll('.monster-item').forEach(el => el.classList.remove('active'));
-    document.getElementById(`item-${slug}`)?.classList.add('active');
+    const activeEl = document.querySelector(`[data-slug="${slug}"]`);
+    if (activeEl) activeEl.classList.add('active');
 
     const loader = document.getElementById('loading');
     loader.style.display = 'flex';
 
     try {
-        // 1. Traducciones inmediatas por diccionario local
         const nameEs = translateMonsterName(monster.name);
         const alignEs = translateAlignment(monster.alignment);
         const sizeEs = dndDictionary[monster.size] || monster.size || '';
         const typeEs = dndDictionary[monster.type] || monster.type || '';
-        const armorDescEs = replaceTechnicalTerms(monster.armor_desc || 'natural');
-        const sensesEs = replaceTechnicalTerms(monster.senses);
-        const languagesEs = replaceTechnicalTerms(monster.languages);
 
-        // 2. Traducción de rasgos especiales y acciones en paralelo
+        // Traducción asíncrona segura con fallback
         const traitsPromises = (monster.special_abilities || []).map(async t => ({
-            name: dndDictionary[t.name] || t.name,
+            name: t.name,
             desc: await translate(t.desc)
         }));
 
         const actionsPromises = (monster.actions || []).map(async a => ({
-            name: dndDictionary[a.name] || a.name,
+            name: a.name,
             desc: await translate(a.desc)
         }));
 
-        const descPromise = monster.desc ? translate(monster.desc) : Promise.resolve("Sin descripción extendida.");
-
-        const [translatedTraits, translatedActions, translatedDesc] = await Promise.all([
+        const [translatedTraits, translatedActions] = await Promise.all([
             Promise.all(traitsPromises),
-            Promise.all(actionsPromises),
-            descPromise
+            Promise.all(actionsPromises)
         ]);
 
         const content = document.getElementById('content');
@@ -638,11 +451,74 @@ async function loadAndTranslateMonster(slug) {
             </div>
             <div class="taper-line"></div>
 
-            <div class="property-line"><strong>Clase de Armadura:</strong> ${monster.armor_class || '—'} (${armorDescEs})</div>
+            <div class="property-line"><strong>Clase de Armadura:</strong> ${monster.armor_class || '—'} (${monster.armor_desc || 'armadura natural'})</div>
             <div class="property-line"><strong>Puntos de Golpe:</strong> ${monster.hit_points || '—'} (${monster.hit_dice || '—'})</div>
             <div class="property-line"><strong>Velocidad:</strong> ${formatSpeed(monster.speed)}</div>
 
             <table class="abilities-table">
                 <thead>
                     <tr>
-                        <th>FUE</th><th>DES</th><th>CON</th><th>I
+                        <th>FUE</th><th>DES</th><th>CON</th><th>INT</th><th>SAB</th><th>CAR</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>${formatMod(monster.strength)}</td>
+                        <td>${formatMod(monster.dexterity)}</td>
+                        <td>${formatMod(monster.constitution)}</td>
+                        <td>${formatMod(monster.intelligence)}</td>
+                        <td>${formatMod(monster.wisdom)}</td>
+                        <td>${formatMod(monster.charisma)}</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="property-line"><strong>Sentidos:</strong> ${monster.senses || '—'}</div>
+            <div class="property-line"><strong>Idiomas:</strong> ${monster.languages || '—'}</div>
+            <div class="property-line"><strong>Desafío (CR):</strong> ${monster.challenge_rating || '—'}</div>
+
+            <div class="taper-line"></div>
+
+            ${translatedTraits.map(t => `
+                <div class="action-block">
+                    <span class="action-name">${t.name}.</span>${t.desc}
+                </div>
+            `).join('')}
+
+            ${translatedActions.length > 0 ? `<div class="section-header">Acciones</div>` : ''}
+            ${translatedActions.map(a => `
+                <div class="action-block">
+                    <span class="action-name">${a.name}.</span>${a.desc}
+                </div>
+            `).join('')}
+
+            ${monster.desc ? `
+                <div class="description-text">
+                    <strong>Descripción:</strong> ${monster.desc}
+                </div>
+            ` : ''}
+        `;
+    } catch (err) {
+        console.error("Error al renderizar el monstruo:", err);
+    } finally {
+        loader.style.display = 'none';
+    }
+}
+
+// Inicialización de eventos
+window.addEventListener('DOMContentLoaded', () => {
+    const searchInput = document.getElementById('searchInput');
+    
+    searchInput.addEventListener('input', (e) => {
+        clearTimeout(searchTimeout);
+        searchTimeout = setTimeout(() => {
+            fetchMonsterList(e.target.value.trim());
+        }, 300);
+    });
+
+    fetchMonsterList();
+});
+</script>
+
+</body>
+</html>
