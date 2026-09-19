@@ -254,7 +254,7 @@
     <div class="app-layout">
         <div class="sidebar">
             <div class="filter-group">
-                <input type="text" id="searchInput" class="search-bar" placeholder="Buscar por nombre...">
+                <input type="text" id="searchInput" class="search-bar" placeholder="Buscar por nombre (ej: dragon, esqueleto)...">
                 
                 <div class="filter-row">
                     <select id="typeFilter" class="filter-select">
@@ -331,6 +331,25 @@ const alignmentsDict = {
     "chaotic evil": "Caótico Maligno",
     "unaligned": "Sin Alineamiento",
     "any alignment": "Cualquier Alineamiento"
+};
+
+const spanishToEnglishNames = {
+    "esqueleto": "skeleton",
+    "zombi": "zombie",
+    "zombie": "zombie",
+    "ogro": "ogre",
+    "lobo": "wolf",
+    "fantasma": "ghost",
+    "momia": "mummy",
+    "sombra": "shadow",
+    "vampiro": "vampire",
+    "dragon": "dragon",
+    "dragón": "dragon",
+    "orco": "orc",
+    "trol": "troll",
+    "troll": "troll",
+    "oso": "bear",
+    "araña": "spider"
 };
 
 const monsterNamesDict = {
@@ -457,12 +476,17 @@ async function fetchMonsterList() {
     const listElement = document.getElementById('monsterList');
     listElement.innerHTML = '<li class="monster-item">Buscando monstruos...</li>';
 
-    const searchVal = document.getElementById('searchInput').value.trim();
+    let searchVal = document.getElementById('searchInput').value.trim().toLowerCase();
     const typeVal = document.getElementById('typeFilter').value;
     const crVal = document.getElementById('crFilter').value;
 
+    // Traducción rápida del término introducido de español a inglés si aplica
+    if (searchVal && spanishToEnglishNames[searchVal]) {
+        searchVal = spanishToEnglishNames[searchVal];
+    }
+
     try {
-        let queryParams = new URLSearchParams({ limit: 40 });
+        let queryParams = new URLSearchParams({ limit: 50 });
         
         if (searchVal) queryParams.append('search', searchVal);
         if (typeVal) queryParams.append('type', typeVal);
@@ -596,8 +620,8 @@ async function loadAndTranslateMonster(slug) {
 
             ${translatedDesc ? `
                 <div class="description-text">
-                    <strong>Descripción:</strong>
-                    </div>
+                    <strong>Descripción:</strong> ${translatedDesc}
+                </div>
             ` : ''}
         `;
     } catch (err) {
