@@ -65,20 +65,33 @@
             border-radius: 6px;
             padding: 15px;
             box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-            max-height: 80vh;
+            max-height: 85vh;
             display: flex;
             flex-direction: column;
         }
 
-        .search-bar {
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+
+        .search-bar, .filter-select {
             width: 100%;
             padding: 8px 12px;
             box-sizing: border-box;
             border: 1px solid var(--border-color);
             border-radius: 4px;
             background-color: var(--statblock-bg);
-            margin-bottom: 12px;
             font-family: inherit;
+            color: var(--text-color);
+        }
+
+        .filter-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
         }
 
         .monster-list {
@@ -139,13 +152,6 @@
             color: var(--primary-red);
             margin: 0;
             font-size: 1.8em;
-        }
-
-        .statblock-meta {
-            font-style: italic;
-            font-size: 0.95em;
-            color: #555;
-            margin-top: 2px;
         }
 
         .taper-line {
@@ -242,12 +248,61 @@
 <div class="container">
     <header>
         <h1>Compendio de Monstruos D&D 5e</h1>
-        <div class="subtitle">Traducción Técnica Integrada (Open5e API)</div>
+        <div class="subtitle">Traducción Técnica e Integración Avanzada</div>
     </header>
 
     <div class="app-layout">
         <div class="sidebar">
-            <input type="text" id="searchInput" class="search-bar" placeholder="Buscar monstruo (ej: Zombie, Dragon, Skeleton)...">
+            <div class="filter-group">
+                <input type="text" id="searchInput" class="search-bar" placeholder="Buscar por nombre...">
+                
+                <div class="filter-row">
+                    <select id="typeFilter" class="filter-select">
+                        <option value="">Tipo (Todos)</option>
+                        <option value="aberration">Aberración</option>
+                        <option value="beast">Bestia</option>
+                        <option value="celestial">Celestial</option>
+                        <option value="construct">Constructo</option>
+                        <option value="dragon">Dragón</option>
+                        <option value="elemental">Elemental</option>
+                        <option value="fey">Incorpóreo / Hada</option>
+                        <option value="fiend">Infernal</option>
+                        <option value="giant">Gigante</option>
+                        <option value="humanoid">Humanoide</option>
+                        <option value="monstrosity">Monstruosidad</option>
+                        <option value="ooze">Cieno</option>
+                        <option value="plant">Planta</option>
+                        <option value="undead">No-muerto</option>
+                    </select>
+
+                    <select id="crFilter" class="filter-select">
+                        <option value="">Desafío</option>
+                        <option value="0">Desafío 0</option>
+                        <option value="1/8">Desafío 1/8</option>
+                        <option value="1/4">Desafío 1/4</option>
+                        <option value="1/2">Desafío 1/2</option>
+                        <option value="1">Desafío 1</option>
+                        <option value="2">Desafío 2</option>
+                        <option value="3">Desafío 3</option>
+                        <option value="4">Desafío 4</option>
+                        <option value="5">Desafío 5</option>
+                        <option value="6">Desafío 6</option>
+                        <option value="7">Desafío 7</option>
+                        <option value="8">Desafío 8</option>
+                        <option value="9">Desafío 9</option>
+                        <option value="10">Desafío 10</option>
+                        <option value="11">Desafío 11</option>
+                        <option value="12">Desafío 12</option>
+                        <option value="13">Desafío 13</option>
+                        <option value="14">Desafío 14</option>
+                        <option value="15">Desafío 15</option>
+                        <option value="16">Desafío 16</option>
+                        <option value="17">Desafío 17</option>
+                        <option value="20">Desafío 20+</option>
+                    </select>
+                </div>
+            </div>
+
             <ul class="monster-list" id="monsterList"></ul>
         </div>
 
@@ -280,15 +335,22 @@ const alignmentsDict = {
 
 const monsterNamesDict = {
     "Skeleton": "Esqueleto",
+    "Warhorse Skeleton": "Esqueleto de Caballo de Guerra",
     "Zombie": "Zombi",
+    "Ogre Zombie": "Zombi Ogro",
     "Ghoul": "Ghul",
+    "Ghast": "Ghast",
     "Specter": "Espectro",
     "Shadow": "Sombra",
     "Wight": "Tumulario",
+    "Wraith": "Sombra Espectral / Wraith",
     "Mummy": "Momia",
+    "Mummy Lord": "Señor de las Momias",
     "Lich": "Liche",
     "Vampire": "Vampiro",
+    "Vampire Spawn": "Progenie Vampírica",
     "Ghost": "Fantasma",
+    "Flameskull": "Calavera Flameante",
     "Goblin": "Goblin",
     "Orc": "Orco",
     "Ogre": "Ogro",
@@ -303,6 +365,7 @@ const dndDictionary = {
     "construct": "Constructo",
     "dragon": "Dragón",
     "elemental": "Elemental",
+    "fey": "Incorpóreo/Hada",
     "fiend": "Infernal",
     "giant": "Gigante",
     "humanoid": "Humanoide",
@@ -315,7 +378,21 @@ const dndDictionary = {
     "Medium": "Mediano",
     "Large": "Grande",
     "Huge": "Enorme",
-    "Gargantuan": "Gargantesco"
+    "Gargantuan": "Gargantesco",
+    "natural armor": "armadura natural",
+    "shield": "escudo",
+    "leather armor": "armadura de cuero",
+    "darkvision": "visión en la oscuridad",
+    "blindsight": "visión a ciegas",
+    "tremorsense": "percepción de la vibración",
+    "truesight": "visión verdadera",
+    "Multiattack": "Multiataque",
+    "Bite": "Mordisco",
+    "Claw": "Garra",
+    "Claws": "Garras",
+    "Tail": "Cola",
+    "Gore": "Cornada",
+    "Slam": "Golpe"
 };
 
 function translateMonsterName(name) {
@@ -346,45 +423,62 @@ function formatSpeed(speedObj) {
     return parts.join(', ') || '0 pies';
 }
 
+function replaceTechnicalTerms(str) {
+    if (!str) return '—';
+    let result = str;
+    for (const [key, val] of Object.entries(dndDictionary)) {
+        const regex = new RegExp(`\\b${key}\\b`, 'gi');
+        result = result.replace(regex, val);
+    }
+    return result;
+}
+
 async function translate(text) {
     if (!text || text.trim() === '') return '';
     try {
         const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 3000); // 3s timeout por seguridad
-        
+        const timeoutId = setTimeout(() => controller.abort(), 2500);
+
         const res = await fetch(`https://api.mymemory.translated.net/get?q=${encodeURIComponent(text.substring(0, 450))}&langpair=en|es`, {
             signal: controller.signal
         });
         clearTimeout(timeoutId);
-        
-        if (!res.ok) return text;
+
+        if (!res.ok) return replaceTechnicalTerms(text);
         const data = await res.json();
-        return data.responseData?.translatedText || text;
+        const translatedText = data.responseData?.translatedText || text;
+        return replaceTechnicalTerms(translatedText);
     } catch (e) {
-        // En caso de bloqueo CORS o Timeout, devuelve el texto original en inglés sin romper la UI
-        return text;
+        return replaceTechnicalTerms(text);
     }
 }
 
-async function fetchMonsterList(query = '') {
+async function fetchMonsterList() {
     const listElement = document.getElementById('monsterList');
-    listElement.innerHTML = '<li class="monster-item">Cargando resultados...</li>';
+    listElement.innerHTML = '<li class="monster-item">Buscando monstruos...</li>';
+
+    const searchVal = document.getElementById('searchInput').value.trim();
+    const typeVal = document.getElementById('typeFilter').value;
+    const crVal = document.getElementById('crFilter').value;
 
     try {
-        // Usamos la API v1 con búsqueda universal por texto
-        const url = query 
-            ? `https://api.open5e.com/v1/monsters/?search=${encodeURIComponent(query)}&limit=40`
-            : `https://api.open5e.com/v1/monsters/?limit=40`;
+        let queryParams = new URLSearchParams({ limit: 40 });
         
+        if (searchVal) queryParams.append('search', searchVal);
+        if (typeVal) queryParams.append('type', typeVal);
+        if (crVal) queryParams.append('challenge_rating', crVal);
+
+        const url = `https://api.open5e.com/v1/monsters/?${queryParams.toString()}`;
+
         const response = await fetch(url);
-        if (!response.ok) throw new Error("Error en la respuesta de la red");
-        
+        if (!response.ok) throw new Error("Error en la respuesta");
+
         const data = await response.json();
         currentMonsters = data.results || [];
 
         listElement.innerHTML = '';
         if (currentMonsters.length === 0) {
-            listElement.innerHTML = '<li class="monster-item">No se encontraron monstruos.</li>';
+            listElement.innerHTML = '<li class="monster-item">Sin resultados.</li>';
             return;
         }
 
@@ -393,18 +487,18 @@ async function fetchMonsterList(query = '') {
             const li = document.createElement('li');
             li.className = 'monster-item';
             li.setAttribute('data-slug', monster.slug);
-            
+
             li.onclick = () => loadAndTranslateMonster(monster.slug);
 
             li.innerHTML = `
                 <span>${translatedName}</span>
-                <span class="monster-cr">CR ${monster.challenge_rating || '—'}</span>
+                <span class="monster-cr">Desafío ${monster.challenge_rating || '—'}</span>
             `;
             listElement.appendChild(li);
         });
 
     } catch (error) {
-        console.error("Error cargando la lista:", error);
+        console.error("Error al cargar la lista:", error);
         listElement.innerHTML = '<li class="monster-item">Error al conectar con la API.</li>';
     }
 }
@@ -413,7 +507,6 @@ async function loadAndTranslateMonster(slug) {
     const monster = currentMonsters.find(m => m.slug === slug);
     if (!monster) return;
 
-    // Actualizar selección visual
     document.querySelectorAll('.monster-item').forEach(el => el.classList.remove('active'));
     const activeEl = document.querySelector(`[data-slug="${slug}"]`);
     if (activeEl) activeEl.classList.add('active');
@@ -424,34 +517,43 @@ async function loadAndTranslateMonster(slug) {
     try {
         const nameEs = translateMonsterName(monster.name);
         const alignEs = translateAlignment(monster.alignment);
-        const sizeEs = dndDictionary[monster.size] || monster.size || '';
-        const typeEs = dndDictionary[monster.type] || monster.type || '';
+        const sizeEs = dndDictionary[monster.size] || monster.size || '—';
+        const typeEs = dndDictionary[monster.type] || monster.type || '—';
+        const armorDescEs = replaceTechnicalTerms(monster.armor_desc || 'natural');
+        const sensesEs = replaceTechnicalTerms(monster.senses);
+        const languagesEs = replaceTechnicalTerms(monster.languages);
 
-        // Traducción asíncrona segura con fallback
         const traitsPromises = (monster.special_abilities || []).map(async t => ({
-            name: t.name,
+            name: replaceTechnicalTerms(t.name),
             desc: await translate(t.desc)
         }));
 
         const actionsPromises = (monster.actions || []).map(async a => ({
-            name: a.name,
+            name: replaceTechnicalTerms(a.name),
             desc: await translate(a.desc)
         }));
 
-        const [translatedTraits, translatedActions] = await Promise.all([
+        const descPromise = monster.desc ? translate(monster.desc) : Promise.resolve('');
+
+        const [translatedTraits, translatedActions, translatedDesc] = await Promise.all([
             Promise.all(traitsPromises),
-            Promise.all(actionsPromises)
+            Promise.all(actionsPromises),
+            descPromise
         ]);
 
         const content = document.getElementById('content');
         content.innerHTML = `
             <div class="statblock-header">
                 <h2 class="statblock-title">${nameEs}</h2>
-                <div class="statblock-meta">${sizeEs} ${typeEs}, ${alignEs}</div>
             </div>
+
+            <div class="property-line"><strong>Tipo:</strong> ${typeEs.toLowerCase()}</div>
+            <div class="property-line"><strong>Tamaño:</strong> ${sizeEs.toLowerCase()}</div>
+            <div class="property-line"><strong>Alineamiento:</strong> ${alignEs.toLowerCase()}</div>
+
             <div class="taper-line"></div>
 
-            <div class="property-line"><strong>Clase de Armadura:</strong> ${monster.armor_class || '—'} (${monster.armor_desc || 'armadura natural'})</div>
+            <div class="property-line"><strong>Clase de Armadura:</strong> ${monster.armor_class || '—'} (${armorDescEs})</div>
             <div class="property-line"><strong>Puntos de Golpe:</strong> ${monster.hit_points || '—'} (${monster.hit_dice || '—'})</div>
             <div class="property-line"><strong>Velocidad:</strong> ${formatSpeed(monster.speed)}</div>
 
@@ -473,9 +575,9 @@ async function loadAndTranslateMonster(slug) {
                 </tbody>
             </table>
 
-            <div class="property-line"><strong>Sentidos:</strong> ${monster.senses || '—'}</div>
-            <div class="property-line"><strong>Idiomas:</strong> ${monster.languages || '—'}</div>
-            <div class="property-line"><strong>Desafío (CR):</strong> ${monster.challenge_rating || '—'}</div>
+            <div class="property-line"><strong>Sentidos:</strong> ${sensesEs}</div>
+            <div class="property-line"><strong>Idiomas:</strong> ${languagesEs}</div>
+            <div class="property-line"><strong>Desafío:</strong> ${monster.challenge_rating || '—'}</div>
 
             <div class="taper-line"></div>
 
@@ -492,10 +594,10 @@ async function loadAndTranslateMonster(slug) {
                 </div>
             `).join('')}
 
-            ${monster.desc ? `
+            ${translatedDesc ? `
                 <div class="description-text">
-                    <strong>Descripción:</strong> ${monster.desc}
-                </div>
+                    <strong>Descripción:</strong>
+                    </div>
             ` : ''}
         `;
     } catch (err) {
@@ -505,16 +607,21 @@ async function loadAndTranslateMonster(slug) {
     }
 }
 
-// Inicialización de eventos
 window.addEventListener('DOMContentLoaded', () => {
     const searchInput = document.getElementById('searchInput');
-    
-    searchInput.addEventListener('input', (e) => {
+    const typeFilter = document.getElementById('typeFilter');
+    const crFilter = document.getElementById('crFilter');
+
+    const handleFilterChange = () => {
         clearTimeout(searchTimeout);
         searchTimeout = setTimeout(() => {
-            fetchMonsterList(e.target.value.trim());
+            fetchMonsterList();
         }, 300);
-    });
+    };
+
+    searchInput.addEventListener('input', handleFilterChange);
+    typeFilter.addEventListener('change', fetchMonsterList);
+    crFilter.addEventListener('change', fetchMonsterList);
 
     fetchMonsterList();
 });
