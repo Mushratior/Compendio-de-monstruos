@@ -242,7 +242,7 @@
 <div class="container">
     <header>
         <h1>Compendio de Monstruos D&D 5e</h1>
-        <div class="subtitle">Traducción Técnica Integrada (Open5e v1 API)</div>
+        <div class="subtitle">Traducción Técnica Integrada (Soporte para Textos Largos)</div>
     </header>
 
     <div class="app-layout">
@@ -264,7 +264,6 @@
 let searchTimeout = null;
 let currentMonsters = [];
 
-// Diccionario ampliado con Sentidos, Habilidades e Idiomas técnicos
 const dndDictionary = {
     // Tipos
     "aberration": "Aberración", "beast": "Bestia", "celestial": "Celestial", "construct": "Constructo",
@@ -279,7 +278,7 @@ const dndDictionary = {
     "darkvision": "visión en la oscuridad", "blindsight": "visión a ciegas", "tremorsense": "percepción de la vibración",
     "truesight": "visión verdadera", "passive Perception": "Percepción pasiva",
     
-    // Idiomas y conceptos comunes
+    // Idiomas y conceptos
     "telepathy": "telepatía", "understands": "entiende", "but can't speak": "pero no puede hablar",
     "all": "todos", "Common": "Común", "Elvish": "Élfico", "Dwarvish": "Enano", "Draconic": "Dracónico",
     "Infernal": "Infernal", "Abyssal": "Abisal", "Goblin": "Goblin", "Orc": "Orco",
@@ -305,7 +304,6 @@ function debounceSearch() {
     }, 400);
 }
 
-// 1. Obtener lista de monstruos actualizando la URL a /v1/monsters/
 async function fetchMonsterList(query = '') {
     const listElement = document.getElementById('monsterList');
     listElement.innerHTML = '<li class="monster-item">Cargando resultados...</li>';
@@ -343,15 +341,50 @@ async function fetchMonsterList(query = '') {
     }
 }
 
+// Función auxiliar para petición simple a MyMemory
+async function fetchSingleChunkTranslation(chunk) {
+    if (!chunk || chunk.trim() === '') return '';
+    try {
+        const res = await fetch(`https://api.mymemory.translated.net/get?q=${encodeURIComponent(chunk)}&langpair=en|es`);
+        const data = await res.json();
+        return data.responseData?.translatedText || chunk;
+    } catch (e) {
+        return chunk;
+    }
+}
+
+// Función de traducción avanzada: Divide textos largos por frases o puntos
 async function translate(text) {
     if (!text || text.trim() === '') return '';
-    try {
-        const res = await fetch(`https://api.mymemory.translated.net/get?q=${encodeURIComponent(text)}&langpair=en|es`);
-        const data = await res.json();
-        return data.responseData.translatedText || text;
-    } catch (e) {
-        return text;
+    
+    // Si mide menos de 450 caracteres, se traduce directamente
+    if (text.length <= 450) {
+        return await fetchSingleChunkTranslation(text);
     }
+
+    // Si supera los 450 caracteres, dividimos por oraciones (puntos seguidos de espacio)
+    const sentences = text.match(/[^.!?]+[.!?]+/g) || [text];
+    let chunks = [];
+    let currentChunk = "";
+
+    for (const sentence of sentences) {
+        if ((currentChunk + sentence).length > 400) {
+            chunks.push(currentChunk.trim());
+            currentChunk = sentence;
+        } else {
+            currentChunk += " " + sentence;
+        }
+    }
+    if (currentChunk.trim() !== "") {
+        chunks.push(currentChunk.trim());
+    }
+
+    // Traducimos todos los fragmentos en paralelo y los unimos
+    const translatedChunks = await Promise.all(
+        chunks.map(chunk => fetchSingleChunkTranslation(chunk))
+    );
+
+    return translatedChunks.join(" ");
 }
 
 function replaceTechnicalTerms(str) {
@@ -382,7 +415,7 @@ async function loadAndTranslateMonster(slug) {
     const sensesEs = replaceTechnicalTerms(monster.senses);
     const languagesEs = replaceTechnicalTerms(monster.languages);
 
-    // Traducción de rasgos especiales y acciones en paralelo
+    // Traducción de rasgos especiales y acciones en paralelo (con soporte de chunks)
     const traitsPromises = (monster.special_abilities || []).map(async t => ({
         name: dndDictionary[t.name] || t.name,
         desc: await translate(t.desc)
