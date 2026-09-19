@@ -3,20 +3,22 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Catálogo Completo de Monstruos - D&D Manual de Monstruos</title>
+    <title>Compendio de Monstruos - D&D 5e (Auto-Traducción)</title>
     <style>
         :root {
-            --primary: #7a200d;
-            --bg: #f4f1ea;
-            --card-bg: #ffffff;
-            --text: #2c2c2c;
-            --border: #dcd6cd;
+            --primary-red: #8b0000;
+            --dark-red: #580000;
+            --bg-paper: #f4e9d8;
+            --card-bg: #fffdfa;
+            --statblock-bg: #fdf6e7;
+            --text-color: #2b1810;
+            --border-color: #c9ad80;
         }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: var(--bg);
-            color: var(--text);
+            font-family: 'Georgia', 'Times New Roman', serif;
+            background-color: var(--bg-paper);
+            color: var(--text-color);
             margin: 0;
             padding: 20px;
         }
@@ -26,601 +28,435 @@
             margin: 0 auto;
         }
 
-        h1 {
-            color: var(--primary);
-            border-bottom: 3px solid var(--primary);
+        header {
+            text-align: center;
+            border-bottom: 2px solid var(--primary-red);
             padding-bottom: 10px;
             margin-bottom: 20px;
         }
 
-        .filters {
-            background: var(--card-bg);
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        h1 {
+            color: var(--primary-red);
+            margin: 0;
+            text-transform: uppercase;
+        }
+
+        .subtitle {
+            font-style: italic;
+            color: #666;
+            margin-top: 5px;
+        }
+
+        .app-layout {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 15px;
-            margin-bottom: 25px;
-        }
-
-        .filter-group {
-            display: flex;
-            flex-direction: column;
-        }
-
-        .filter-group label {
-            font-weight: bold;
-            margin-bottom: 5px;
-            font-size: 0.9rem;
-            color: var(--primary);
-        }
-
-        .filter-group input, 
-        .filter-group select {
-            padding: 8px 12px;
-            border: 1px solid var(--border);
-            border-radius: 4px;
-            font-size: 0.95rem;
-            outline: none;
-        }
-
-        .filter-group input:focus, 
-        .filter-group select:focus {
-            border-color: var(--primary);
-        }
-
-        .stats-bar {
-            margin-bottom: 15px;
-            font-size: 0.95rem;
-            font-weight: bold;
-            color: #555;
-        }
-
-        .monster-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+            grid-template-columns: 340px 1fr;
             gap: 20px;
         }
 
-        .monster-card {
+        @media (max-width: 768px) {
+            .app-layout {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Sidebar / Lista */
+        .sidebar {
             background-color: var(--card-bg);
-            border-top: 4px solid var(--primary);
-            border-radius: 8px;
-            overflow: hidden;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-            transition: transform 0.15s ease, box-shadow 0.15s ease;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            padding: 15px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            max-height: 80vh;
             display: flex;
             flex-direction: column;
-            justify-content: space-between;
         }
 
-        .monster-card:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 6px 14px rgba(0,0,0,0.12);
-        }
-
-        .monster-image-container {
+        .search-bar {
             width: 100%;
-            height: 160px;
-            background-color: #e9e3d9;
-            position: relative;
-            overflow: hidden;
+            padding: 8px 12px;
+            box-sizing: border-box;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            background-color: var(--statblock-bg);
+            margin-bottom: 12px;
+            font-family: inherit;
         }
 
-        .monster-image {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
+        .monster-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            overflow-y: auto;
+            flex: 1;
         }
 
-        .monster-content {
-            padding: 12px;
+        .monster-item {
+            padding: 10px;
+            border-bottom: 1px solid #eee;
+            cursor: pointer;
             display: flex;
-            flex-direction: column;
-            flex-grow: 1;
             justify-content: space-between;
+            align-items: center;
+            transition: background 0.2s;
         }
 
-        .monster-name {
-            font-size: 1rem;
+        .monster-item:hover {
+            background-color: var(--statblock-bg);
+        }
+
+        .monster-item.active {
+            background-color: var(--primary-red);
+            color: white;
+            border-radius: 4px;
+        }
+
+        .monster-item.active .monster-cr {
+            color: #ffd700;
+        }
+
+        .monster-cr {
+            font-size: 0.85em;
+            color: var(--primary-red);
             font-weight: bold;
-            color: var(--primary);
-            margin-bottom: 6px;
         }
 
-        .monster-info {
-            font-size: 0.85rem;
-            color: #555;
+        /* Ficha Técnica (Statblock) */
+        .statblock-container {
+            background-color: var(--card-bg);
+            border: 2px solid var(--border-color);
+            border-radius: 6px;
+            padding: 25px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+            position: relative;
+        }
+
+        .statblock-header {
+            border-bottom: 2px solid var(--primary-red);
+            padding-bottom: 5px;
             margin-bottom: 10px;
         }
 
-        .tag-container {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 4px;
+        .statblock-title {
+            color: var(--primary-red);
+            margin: 0;
+            font-size: 1.8em;
         }
 
-        .tag {
-            display: inline-block;
-            background: #f0e6df;
-            color: var(--primary);
-            padding: 2px 8px;
-            border-radius: 12px;
-            font-size: 0.75rem;
-            font-weight: bold;
+        .statblock-meta {
+            font-style: italic;
+            font-size: 0.95em;
+            color: #555;
+            margin-top: 2px;
         }
 
-        .no-results {
-            grid-column: 1 / -1;
+        .taper-line {
+            height: 5px;
+            background: linear-gradient(to right, var(--primary-red), transparent);
+            margin: 10px 0;
+        }
+
+        .property-line {
+            color: var(--dark-red);
+            margin: 4px 0;
+            font-size: 0.95em;
+        }
+
+        .property-line strong {
+            color: var(--text-color);
+        }
+
+        .abilities-table {
+            width: 100%;
             text-align: center;
-            padding: 40px;
-            background: var(--card-bg);
-            border-radius: 8px;
+            border-collapse: collapse;
+            margin: 15px 0;
+            background-color: var(--statblock-bg);
+            border-radius: 4px;
+            padding: 5px;
+        }
+
+        .abilities-table th {
+            color: var(--primary-red);
+            font-size: 0.85em;
+            text-transform: uppercase;
+            padding: 4px;
+        }
+
+        .abilities-table td {
+            font-size: 0.95em;
+            padding: 4px;
+        }
+
+        .section-header {
+            color: var(--primary-red);
+            font-size: 1.2em;
+            border-bottom: 1px solid var(--primary-red);
+            margin-top: 15px;
+            margin-bottom: 8px;
+            padding-bottom: 2px;
+        }
+
+        .action-block {
+            margin-bottom: 10px;
+            font-size: 0.95em;
+            line-height: 1.4;
+        }
+
+        .action-name {
+            font-weight: bold;
+            font-style: italic;
+        }
+
+        .description-text {
+            font-size: 0.95em;
+            line-height: 1.5;
+            margin-top: 15px;
+            padding-top: 10px;
+            border-top: 1px dashed var(--border-color);
+            color: #444;
+        }
+
+        .status-msg {
+            text-align: center;
             color: #777;
+            font-style: italic;
+            padding: 40px;
+        }
+
+        .loading-overlay {
+            display: none;
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(255,255,255,0.8);
+            justify-content: center;
+            align-items: center;
+            font-weight: bold;
+            color: var(--primary-red);
+            font-size: 1.2em;
+            border-radius: 6px;
         }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <h1>Manual de Monstruos - Catálogo Completo</h1>
+    <header>
+        <h1>Compendio de Monstruos D&D 5e</h1>
+        <div class="subtitle">Búsqueda vía API Open5e & Traducción Automática al Español</div>
+    </header>
 
-    <div class="filters">
-        <div class="filter-group">
-            <label for="search-name">Buscar por Nombre:</label>
-            <input type="text" id="search-name" placeholder="Ej. Dragón, Diablo, Esqueleto...">
+    <div class="app-layout">
+        <div class="sidebar">
+            <input type="text" id="searchInput" class="search-bar" placeholder="Buscar por nombre en inglés (ej: Dragon, Goblin)..." oninput="debounceSearch()">
+            <ul class="monster-list" id="monsterList"></ul>
         </div>
 
-        <div class="filter-group">
-            <label for="filter-habitat">Hábitat:</label>
-            <select id="filter-habitat">
-                <option value="all">Todos los hábitats</option>
-                <option value="Acuático">Acuático</option>
-                <option value="Bosque">Bosque</option>
-                <option value="Ciénaga">Ciénaga</option>
-                <option value="Colinas">Colinas</option>
-                <option value="Desierto">Desierto</option>
-                <option value="Inframundo">Inframundo / Plano Infernal</option>
-                <option value="Montaña">Montaña</option>
-                <option value="Plano Subterráneo">Plano Subterráneo</option>
-                <option value="Urbano">Urbano</option>
-            </select>
-        </div>
-
-        <div class="filter-group">
-            <label for="filter-cr">Desafío (CD / CR):</label>
-            <select id="filter-cr">
-                <option value="all">Todos los valores de desafío</option>
-                <option value="0">0</option>
-                <option value="0.125">1/8</option>
-                <option value="0.25">1/4</option>
-                <option value="0.5">1/2</option>
-                <option value="1">1</option>
-                <option value="2">2</option>
-                <option value="3">3</option>
-                <option value="4">4</option>
-                <option value="5">5</option>
-                <option value="6">6</option>
-                <option value="7">7</option>
-                <option value="8">8</option>
-                <option value="9">9</option>
-                <option value="10">10</option>
-                <option value="11">11</option>
-                <option value="12">12</option>
-                <option value="13">13</option>
-                <option value="14">14</option>
-                <option value="15">15</option>
-                <option value="16">16</option>
-                <option value="17">17</option>
-                <option value="18">18</option>
-                <option value="19">19</option>
-                <option value="20">20+</option>
-            </select>
+        <div class="statblock-container" id="statblockView">
+            <div id="loading" class="loading-overlay">Traduciendo datos del monstruo...</div>
+            <div id="content">
+                <div class="status-msg">Selecciona un monstruo de la lista para cargar y traducir su ficha.</div>
+            </div>
         </div>
     </div>
-
-    <div class="stats-bar" id="stats-bar">Cargando catálogo completo...</div>
-
-    <div class="monster-grid" id="monster-grid"></div>
 </div>
-    <script>
-    const monsters = [
-        { name: "Aboleth", cr: 10, crText: "10", habitat: "Acuático", page: 11 },
-        { name: "Abominación yuan-ti", cr: 7, crText: "7", habitat: "Ciénaga", page: 345 },
-        { name: "Acechador invisible", cr: 6, crText: "6", habitat: "Urbano", page: 13 },
-        { name: "Acechador osgo", cr: 3, crText: "3", habitat: "Inframundo", page: 267 },
-        { name: "Aeromante aarakocra", cr: 2, crText: "2", habitat: "Montaña", page: 10 },
-        { name: "Águila", cr: 0, crText: "0", habitat: "Montaña", page: 348 },
-        { name: "Águila gigante", cr: 1, crText: "1", habitat: "Montaña", page: 348 },
-        { name: "Aguja marchita", cr: 0.25, crText: "1/4", habitat: "Bosque", page: 233 },
-        { name: "Alce", cr: 0.25, crText: "1/4", habitat: "Bosque", page: 348 },
-        { name: "Alce gigante", cr: 2, crText: "2", habitat: "Bosque", page: 348 },
-        { name: "Alfombra asfixiante animada", cr: 2, crText: "2", habitat: "Urbano", page: 263 },
-        { name: "Almirante pirata", cr: 10, crText: "10", habitat: "Acuático", page: 279 },
-        { name: "Alosaurio", cr: 2, crText: "2", habitat: "Bosque", page: 349 },
-        { name: "Amasijo de aniquilación", cr: 13, crText: "13", habitat: "Inframundo", page: 14 },
-        { name: "Ankheg", cr: 2, crText: "2", habitat: "Bosque", page: 15 },
-        { name: "Anquilosaurio", cr: 3, crText: "3", habitat: "Bosque", page: 349 },
-        { name: "Aparición", cr: 5, crText: "5", habitat: "Inframundo", page: 16 },
-        { name: "Ápice empíreo", cr: 23, crText: "23", habitat: "Montaña", page: 131 },
-        { name: "Aprendiz de mago", cr: 0.25, crText: "1/4", habitat: "Urbano", page: 227 },
-        { name: "Araña", cr: 0, crText: "0", habitat: "Bosque", page: 349 },
-        { name: "Araña de fase", cr: 3, crText: "3", habitat: "Plano Subterráneo", page: 17 },
-        { name: "Araña gigante", cr: 1, crText: "1", habitat: "Bosque", page: 349 },
-        { name: "Árbol despertado", cr: 2, crText: "2", habitat: "Bosque", page: 282 },
-        { name: "Árbol marchito", cr: 2, crText: "2", habitat: "Bosque", page: 234 },
-        { name: "Arbusto despertado", cr: 0, crText: "0", habitat: "Bosque", page: 282 },
-        { name: "Arcanaloth", cr: 12, crText: "12", habitat: "Inframundo", page: 18 },
-        { name: "Archelon", cr: 3, crText: "3", habitat: "Acuático", page: 350 },
-        { name: "Archimago", cr: 12, crText: "12", habitat: "Urbano", page: 228 },
-        { name: "Archisaga", cr: 15, crText: "15", habitat: "Bosque", page: 20 },
-        { name: "Arcipreste", cr: 9, crText: "9", habitat: "Urbano", page: 297 },
-        { name: "Arcipreste kuo-toa", cr: 6, crText: "6", habitat: "Acuático", page: 218 },
-        { name: "Armadura animada", cr: 1, crText: "1", habitat: "Urbano", page: 263 },
-        { name: "Arpía", cr: 1, crText: "1", habitat: "Montaña", page: 21 },
-        { name: "Artista", cr: 0.125, crText: "1/8", habitat: "Urbano", page: 22 },
-        { name: "Artista legendario", cr: 4, crText: "4", habitat: "Urbano", page: 23 },
-        { name: "Artista virtuoso", cr: 2, crText: "2", habitat: "Urbano", page: 23 },
-        { name: "Asesino", cr: 8, crText: "8", habitat: "Urbano", page: 24 },
-        { name: "Aspirante a caballero de la muerte", cr: 6, crText: "6", habitat: "Inframundo", page: 44 },
-        { name: "Avispa gigante", cr: 0.5, crText: "1/2", habitat: "Bosque", page: 350 },
-        { name: "Azotamentes", cr: 7, crText: "7", habitat: "Plano Subterráneo", page: 26 },
-        { name: "Azotamentes arcanista", cr: 8, crText: "8", habitat: "Plano Subterráneo", page: 27 },
-        { name: "Babuino", cr: 0, crText: "0", habitat: "Bosque", page: 350 },
-        { name: "Balor", cr: 19, crText: "19", habitat: "Inframundo", page: 28 },
-        { name: "Bandido", cr: 0.125, crText: "1/8", habitat: "Urbano", page: 29 },
-        { name: "Banshee", cr: 4, crText: "4", habitat: "Bosque", page: 31 },
-        { name: "Barigura", cr: 5, crText: "5", habitat: "Inframundo", page: 32 },
-        { name: "Barón sahuagin", cr: 5, crText: "5", habitat: "Acuático", page: 302 },
-        { name: "Basilisco", cr: 3, crText: "3", habitat: "Plano Subterráneo", page: 33 },
-        { name: "Batidor", cr: 0.5, crText: "1/2", habitat: "Bosque", page: 34 },
-        { name: "Behir", cr: 11, crText: "11", habitat: "Montaña", page: 35 },
-        { name: "Berserker", cr: 2, crText: "2", habitat: "Montaña", page: 36 },
-        { name: "Bestia trémula", cr: 3, crText: "3", habitat: "Bosque", page: 37 },
-        { name: "Bocón barbotante", cr: 2, crText: "2", habitat: "Plano Subterráneo", page: 38 },
-        { name: "Brote micónido", cr: 0, crText: "0", habitat: "Plano Subterráneo", page: 244 },
-        { name: "Broza movediza", cr: 5, crText: "5", habitat: "Ciénaga", page: 39 },
-        { name: "Búho", cr: 0, crText: "0", habitat: "Bosque", page: 351 },
-        { name: "Búho gigante", cr: 0.25, crText: "1/4", habitat: "Bosque", page: 351 },
-        { name: "Buitre", cr: 0, crText: "0", habitat: "Desierto", page: 351 },
-        { name: "Buitre gigante", cr: 1, crText: "1", habitat: "Desierto", page: 351 },
-        { name: "Bulette", cr: 5, crText: "5", habitat: "Colinas", page: 40 },
-        { name: "Bullywug erudito del pantano", cr: 2, crText: "2", habitat: "Ciénaga", page: 41 },
-        { name: "Caballero", cr: 3, crText: "3", habitat: "Urbano", page: 42 },
-        { name: "Caballero andante", cr: 3, crText: "3", habitat: "Urbano", page: 42 },
-        { name: "Caballero de la muerte", cr: 17, crText: "17", habitat: "Inframundo", page: 43 },
-        { name: "Caballero githyanki", cr: 8, crText: "8", habitat: "Inframundo", page: 165 },
-        { name: "Caballito de mar", cr: 0, crText: "0", habitat: "Acuático", page: 352 },
-        { name: "Caballito de mar gigante", cr: 0.5, crText: "1/2", habitat: "Acuático", page: 352 },
-        { name: "Caballo de guerra", cr: 0.5, crText: "1/2", habitat: "Urbano", page: 352 },
-        { name: "Caballo de guerra esqueleto", cr: 0.5, crText: "1/2", habitat: "Inframundo", page: 143 },
-        { name: "Caballo de monta", cr: 0.25, crText: "1/4", habitat: "Urbano", page: 352 },
-        { name: "Caballo de tiro", cr: 0.25, crText: "1/4", habitat: "Urbano", page: 352 },
-        { name: "Cabra", cr: 0, crText: "0", habitat: "Montaña", page: 353 },
-        { name: "Cabra gigante", cr: 0.5, crText: "1/2", habitat: "Montaña", page: 353 },
-        { name: "Cachorro de bulette", cr: 1, crText: "1", habitat: "Colinas", page: 40 },
-        { name: "Calamar gigante", cr: 1, crText: "1", habitat: "Acuático", page: 353 },
-        { name: "Calavera llameante", cr: 4, crText: "4", habitat: "Plano Subterráneo", page: 45 },
-        { name: "Cambion", cr: 5, crText: "5", habitat: "Inframundo", page: 46 },
-        { name: "Camello", cr: 0.125, crText: "1/8", habitat: "Desierto", page: 354 },
-        { name: "Cangrejo", cr: 0, crText: "0", habitat: "Acuático", page: 354 },
-        { name: "Cangrejo gigante", cr: 0.125, crText: "1/8", habitat: "Acuático", page: 354 },
-        { name: "Capitán bandido", cr: 2, crText: "2", habitat: "Urbano", page: 29 },
-        { name: "Capitán batidor", cr: 3, crText: "3", habitat: "Bosque", page: 34 },
-        { name: "Capitán de la guardia", cr: 3, crText: "3", habitat: "Urbano", page: 186 },
-        { name: "Capitán hobgoblin", cr: 3, crText: "3", habitat: "Colinas", page: 196 },
-        { name: "Capitán pirata", cr: 2, crText: "2", habitat: "Acuático", page: 279 },
-        { name: "Carroñero reptante", cr: 2, crText: "2", habitat: "Plano Subterráneo", page: 47 },
-        { name: "Cataclismo elemental", cr: 18, crText: "18", habitat: "Desierto", page: 49 },
-        { name: "Centinela azer", cr: 2, crText: "2", habitat: "Montaña", page: 25 },
-        { name: "Centinela cíclope", cr: 6, crText: "6", habitat: "Montaña", page: 53 },
-        { name: "Chacal", cr: 0, crText: "0", habitat: "Desierto", page: 354 },
-        { name: "Chasme", cr: 6, crText: "6", habitat: "Inframundo", page: 51 },
-        { name: "Chuul", cr: 4, crText: "4", habitat: "Acuático", page: 52 },
-        { name: "Ciempiés gigante", cr: 0.25, crText: "1/4", habitat: "Plano Subterráneo", page: 355 },
-        { name: "Cieno gris", cr: 0.5, crText: "1/2", habitat: "Plano Subterráneo", page: 54 },
-        { name: "Cieno gris psíquico", cr: 1, crText: "1", habitat: "Plano Subterráneo", page: 54 },
-        { name: "Ciervo", cr: 0, crText: "0", habitat: "Bosque", page: 355 },
-        { name: "Cocatriz", cr: 0.5, crText: "1/2", habitat: "Ciénaga", page: 55 },
-        { name: "Cocatriz regente", cr: 3, crText: "3", habitat: "Ciénaga", page: 55 },
-        { name: "Cocodrilo", cr: 0.5, crText: "1/2", habitat: "Ciénaga", page: 355 },
-        { name: "Cocodrilo gigante", cr: 5, crText: "5", habitat: "Ciénaga", page: 355 },
-        { name: "Coloso", cr: 16, crText: "16", habitat: "Urbano", page: 56 },
-        { name: "Comadreja", cr: 0, crText: "0", habitat: "Bosque", page: 356 },
-        { name: "Comadreja gigante", cr: 0.125, crText: "1/8", habitat: "Bosque", page: 356 },
-        { name: "Comandante berserker", cr: 5, crText: "5", habitat: "Montaña", page: 36 },
-        { name: "Contemplador", cr: 13, crText: "13", habitat: "Plano Subterráneo", page: 58 },
-        { name: "Contemplador zombi", cr: 5, crText: "5", habitat: "Plano Subterráneo", page: 347 },
-        { name: "Corrupto yuan-ti (tipo 1)", cr: 3, crText: "3", habitat: "Ciénaga", page: 343 },
-        { name: "Corrupto yuan-ti (tipo 2)", cr: 4, crText: "4", habitat: "Ciénaga", page: 344 },
-        { name: "Corrupto yuan-ti (tipo 3)", cr: 5, crText: "5", habitat: "Ciénaga", page: 344 },
-        { name: "Couatl", cr: 4, crText: "4", habitat: "Bosque", page: 59 },
-        { name: "Cubo gelatinoso", cr: 2, crText: "2", habitat: "Plano Subterráneo", page: 60 },
-        { name: "Cuervo", cr: 0, crText: "0", habitat: "Bosque", page: 356 },
-        { name: "Dao", cr: 11, crText: "11", habitat: "Montaña", page: 61 },
-        { name: "Demonio de las sombras", cr: 4, crText: "4", habitat: "Inframundo", page: 62 },
-        { name: "Deva", cr: 10, crText: "10", habitat: "Montaña", page: 63 },
-        { name: "Devorador de intelectos", cr: 2, crText: "2", habitat: "Plano Subterráneo", page: 64 },
-        { name: "Diablillo", cr: 1, crText: "1", habitat: "Urbano", page: 65 },
-        { name: "Diablo astado", cr: 11, crText: "11", habitat: "Inframundo", page: 66 },
-        { name: "Diablo barbado", cr: 3, crText: "3", habitat: "Inframundo", page: 67 },
-        { name: "Diablo de las cadenas", cr: 8, crText: "8", habitat: "Inframundo", page: 69 },
-        { name: "Diablo de la sima", cr: 20, crText: "20", habitat: "Inframundo", page: 68 },
-        { name: "Diablo espinoso", cr: 2, crText: "2", habitat: "Inframundo", page: 70 },
-        { name: "Diablo gélido", cr: 14, crText: "14", habitat: "Inframundo", page: 71 },
-        { name: "Diablo óseo", cr: 9, crText: "9", habitat: "Inframundo", page: 72 },
-        { name: "Diablo punzante", cr: 5, crText: "5", habitat: "Inframundo", page: 73 },
-        { name: "Djinn", cr: 11, crText: "11", habitat: "Desierto", page: 74 },
-        { name: "Dominaolas sirénido", cr: 2, crText: "2", habitat: "Acuático", page: 314 },
-        { name: "Doppelganger", cr: 3, crText: "3", habitat: "Urbano", page: 75 },
-        { name: "Dracoliche", cr: 17, crText: "17", habitat: "Inframundo", page: 77 },
-        { name: "Dracomante githyanki", cr: 9, crText: "9", habitat: "Inframundo", page: 165 },
-        { name: "Dragón azul adulto", cr: 16, crText: "16", habitat: "Desierto", page: 80 },
-        { name: "Dragón azul anciano", cr: 23, crText: "23", habitat: "Desierto", page: 81 },
-        { name: "Dragón azul joven", cr: 9, crText: "9", habitat: "Desierto", page: 79 },
-        { name: "Dragón blanco adulto", cr: 13, crText: "13", habitat: "Montaña", page: 84 },
-        { name: "Dragón blanco anciano", cr: 20, crText: "20", habitat: "Montaña", page: 85 },
-        { name: "Dragón blanco joven", cr: 6, crText: "6", habitat: "Montaña", page: 83 },
-        { name: "Dragón de bronce adulto", cr: 15, crText: "15", habitat: "Acuático", page: 88 },
-        { name: "Dragón de bronce anciano", cr: 22, crText: "22", habitat: "Acuático", page: 89 },
-        { name: "Dragón de bronce joven", cr: 8, crText: "8", habitat: "Acuático", page: 87 },
-        { name: "Dragón de cobre adulto", cr: 14, crText: "14", habitat: "Colinas", page: 92 },
-        { name: "Dragón de cobre anciano", cr: 21, crText: "21", habitat: "Colinas", page: 93 },
-        { name: "Dragón de cobre joven", cr: 7, crText: "7", habitat: "Colinas", page: 91 },
-        { name: "Dragón de oro adulto", cr: 17, crText: "17", habitat: "Montaña", page: 96 },
-        { name: "Dragón de oro anciano", cr: 24, crText: "24", habitat: "Montaña", page: 97 },
-        { name: "Dragón de oro joven", cr: 10, crText: "10", habitat: "Montaña", page: 95 },
-        { name: "Dragón de oropel adulto", cr: 13, crText: "13", habitat: "Desierto", page: 100 },
-        { name: "Dragón de oropel anciano", cr: 20, crText: "20", habitat: "Desierto", page: 101 },
-        { name: "Dragón de oropel joven", cr: 6, crText: "6", habitat: "Desierto", page: 99 },
-        { name: "Dragón de plata adulto", cr: 16, crText: "16", habitat: "Montaña", page: 104 },
-        { name: "Dragón de plata anciano", cr: 23, crText: "23", habitat: "Montaña", page: 105 },
-        { name: "Dragón de plata joven", cr: 9, crText: "9", habitat: "Montaña", page: 103 },
-        { name: "Dragón feérico adulto", cr: 2, crText: "2", habitat: "Bosque", page: 107 },
-        { name: "Dragón feérico joven", cr: 1, crText: "1", habitat: "Bosque", page: 107 },
-        { name: "Dragón negro adulto", cr: 14, crText: "14", habitat: "Ciénaga", page: 109 },
-        { name: "Dragón negro anciano", cr: 21, crText: "21", habitat: "Ciénaga", page: 110 },
-        { name: "Dragón negro joven", cr: 7, crText: "7", habitat: "Ciénaga", page: 108 },
-        { name: "Dragón rojo adulto", cr: 17, crText: "17", habitat: "Montaña", page: 113 },
-        { name: "Dragón rojo anciano", cr: 24, crText: "24", habitat: "Montaña", page: 114 },
-        { name: "Dragón rojo joven", cr: 10, crText: "10", habitat: "Montaña", page: 112 },
-        { name: "Dragón sombrío", cr: 13, crText: "13", habitat: "Inframundo", page: 117 },
-        { name: "Dragón tortuga", cr: 17, crText: "17", habitat: "Acuático", page: 78 },
-        { name: "Dragón verde adulto", cr: 15, crText: "15", habitat: "Bosque", page: 119 },
-        { name: "Dragón verde anciano", cr: 22, crText: "22", habitat: "Bosque", page: 120 },
-        { name: "Dragón verde joven", cr: 8, crText: "8", habitat: "Bosque", page: 118 },
-        { name: "Draña", cr: 6, crText: "6", habitat: "Plano Subterráneo", page: 122 },
-        { name: "Dretch", cr: 0.25, crText: "1/4", habitat: "Inframundo", page: 123 },
-        { name: "Dríade", cr: 1, crText: "1", habitat: "Bosque", page: 124 },
-        { name: "Druida", cr: 2, crText: "2", habitat: "Bosque", page: 125 },
-        { name: "Duende", cr: 0.25, crText: "1/4", habitat: "Bosque", page: 126 },
-        { name: "Elefante", cr: 4, crText: "4", habitat: "Desierto", page: 356 },
-        { name: "Elemental de agua", cr: 5, crText: "5", habitat: "Acuático", page: 127 },
-        { name: "Elemental de aire", cr: 5, crText: "5", habitat: "Montaña", page: 128 },
-        { name: "Elemental de fuego", cr: 5, crText: "5", habitat: "Desierto", page: 129 },
-        { name: "Elemental de tierra", cr: 5, crText: "5", habitat: "Plano Subterráneo", page: 130 },
-        { name: "Embaucador bandido", cr: 0.5, crText: "1/2", habitat: "Urbano", page: 30 },
-        { name: "Embrujador goblin", cr: 1, crText: "1", habitat: "Bosque", page: 173 },
-        { name: "Empíreo", cr: 23, crText: "23", habitat: "Montaña", page: 132 },
-        { name: "Engendro vampírico", cr: 5, crText: "5", habitat: "Urbano", page: 333 },
-        { name: "Engendro vaporoso mane", cr: 0.125, crText: "1/8", habitat: "Inframundo", page: 229 },
-        { name: "Enjambre de cuervos", cr: 0.25, crText: "1/4", habitat: "Bosque", page: 357 },
-        { name: "Enjambre de dretchs", cr: 2, crText: "2", habitat: "Inframundo", page: 123 },
-        { name: "Enjambre de estirges", cr: 2, crText: "2", habitat: "Bosque", page: 145 },
-        { name: "Enjambre de garras reptantes", cr: 1, crText: "1", habitat: "Inframundo", page: 155 },
-        { name: "Enjambre de insectos", cr: 0.5, crText: "1/2", habitat: "Bosque", page: 357 },
-        { name: "Enjambre de larvas", cr: 2, crText: "2", habitat: "Inframundo", page: 221 },
-        { name: "Enjambre de lémures", cr: 2, crText: "2", habitat: "Inframundo", page: 222 },
-        { name: "Enjambre de murciélagos", cr: 0.25, crText: "1/4", habitat: "Plano Subterráneo", page: 357 },
-        { name: "Enjambre de pirañas", cr: 1, crText: "1", habitat: "Acuático", page: 358 },
-        { name: "Enjambre de ratas", cr: 0.25, crText: "1/4", habitat: "Urbano", page: 358 },
-        { name: "Enjambre de serpientes venenosas", cr: 2, crText: "2", habitat: "Ciénaga", page: 358 },
-        { name: "Enredadera marchita", cr: 0.5, crText: "1/2", habitat: "Bosque", page: 234 },
-        { name: "Ent", cr: 9, crText: "9", habitat: "Bosque", page: 133 },
-        { name: "Erinia", cr: 12, crText: "12", habitat: "Inframundo", page: 134 },
-        { name: "Escarabajo de fuego gigante", cr: 0, crText: "0", habitat: "Plano Subterráneo", page: 358 },
-        { name: "Escoba animada", cr: 0.25, crText: "1/4", habitat: "Urbano", page: 264 },
-        { name: "Escorpión", cr: 0, crText: "0", habitat: "Desierto", page: 359 },
-        { name: "Escorpión gigante", cr: 3, crText: "3", habitat: "Desierto", page: 359 },
-        { name: "Esfinge de las maravillas", cr: 11, crText: "11", habitat: "Desierto", page: 135 },
-        { name: "Esfinge del conocimiento", cr: 11, crText: "11", habitat: "Desierto", page: 137 },
-        { name: "Esfinge de los secretos", cr: 17, crText: "17", habitat: "Desierto", page: 136 },
-        { name: "Esfinge del valor", cr: 17, crText: "17", habitat: "Desierto", page: 138 },
-        { name: "Espada voladora animada", cr: 0.25, crText: "1/4", habitat: "Urbano", page: 264 },
-        { name: "Espantapájaros", cr: 1, crText: "1", habitat: "Urbano", page: 139 },
-        { name: "Espectador", cr: 3, crText: "3", habitat: "Plano Subterráneo", page: 140 },
-        { name: "Espectro", cr: 1, crText: "1", habitat: "Inframundo", page: 141 },
-        { name: "Espía", cr: 1, crText: "1", habitat: "Urbano", page: 142 },
-        { name: "Esqueleto", cr: 0.25, crText: "1/4", habitat: "Inframundo", page: 143 },
-        { name: "Esqueleto llameante", cr: 2, crText: "2", habitat: "Inframundo", page: 144 },
-        { name: "Estirge", cr: 0.125, crText: "1/8", habitat: "Bosque", page: 145 },
-        { name: "Ettercap", cr: 2, crText: "2", habitat: "Bosque", page: 146 },
-        { name: "Ettin", cr: 4, crText: "4", habitat: "Colinas", page: 147 },
-        { name: "Experto en escaramuzas aarakocra", cr: 0.25, crText: "1/4", habitat: "Montaña", page: 10 },
-        { name: "Experto en escaramuzas sirénido", cr: 0.5, crText: "1/2", habitat: "Acuático", page: 314 },
-        { name: "Extraño de agua", cr: 2, crText: "2", habitat: "Acuático", page: 148 },
-        { name: "Extremidad de troll", cr: 1, crText: "1", habitat: "Ciénaga", page: 328 },
-        { name: "Fanático sectario", cr: 2, crText: "2", habitat: "Urbano", page: 307 },
-        { name: "Fantasma", cr: 4, crText: "4", habitat: "Urbano", page: 149 },
-        { name: "Flumph", cr: 0.125, crText: "1/8", habitat: "Plano Subterráneo", page: 150 },
-        { name: "Fomoré", cr: 8, crText: "8", habitat: "Plano Subterráneo", page: 151 },
-        { name: "Fuego fatuo", cr: 2, crText: "2", habitat: "Ciénaga", page: 152 },
-        { name: "Galeb duhr", cr: 6, crText: "6", habitat: "Montaña", page: 153 },
-        { name: "Gárgola", cr: 2, crText: "2", habitat: "Urbano", page: 154 },
-        { name: "Garra reptante", cr: 0, crText: "0", habitat: "Inframundo", page: 155 },
-        { name: "Gato", cr: 0, crText: "0", habitat: "Urbano", page: 359 },
-        { name: "Gelatina ocre", cr: 2, crText: "2", habitat: "Plano Subterráneo", page: 156 },
-        { name: "Geomante hombre lagarto", cr: 2, crText: "2", habitat: "Ciénaga", page: 202 },
-        { name: "Ghast", cr: 2, crText: "2", habitat: "Inframundo", page: 157 },
-        { name: "Gigante de escarcha", cr: 8, crText: "8", habitat: "Montaña", page: 158 },
-        { name: "Gigante de fuego", cr: 9, crText: "9", habitat: "Montaña", page: 159 },
-        { name: "Gigante de las colinas", cr: 5, crText: "5", habitat: "Colinas", page: 160 },
-        { name: "Gigante de las nubes", cr: 9, crText: "9", habitat: "Montaña", page: 161 },
-        { name: "Gigante de las tormentas", cr: 13, crText: "13", habitat: "Montaña", page: 162 },
-        { name: "Gigante de piedra", cr: 7, crText: "7", habitat: "Montaña", page: 163 },
-        { name: "Glabrezu", cr: 9, crText: "9", habitat: "Inframundo", page: 168 },
-        { name: "Gladiador", cr: 5, crText: "5", habitat: "Urbano", page: 169 },
-        { name: "Gnoll colmillo de Yeenoghu", cr: 4, crText: "4", habitat: "Colinas", page: 171 },
-        { name: "Gólem de arcilla", cr: 9, crText: "9", habitat: "Urbano", page: 174 },
-        { name: "Gólem de carne", cr: 5, crText: "5", habitat: "Urbano", page: 175 },
-        { name: "Gólem de hierro", cr: 16, crText: "16", habitat: "Urbano", page: 176 },
-        { name: "Gólem de piedra", cr: 10, crText: "10", habitat: "Urbano", page: 177 },
-        { name: "Gorgon", cr: 5, crText: "5", habitat: "Colinas", page: 178 },
-        { name: "Gorgon de latón", cr: 5, crText: "5", habitat: "Colinas", page: 179 },
-        { name: "Goristro", cr: 17, crText: "17", habitat: "Inframundo", page: 180 },
-        { name: "Gran vividor sátiro", cr: 3, crText: "3", habitat: "Bosque", page: 305 },
-        { name: "Grell", cr: 3, crText: "3", habitat: "Plano Subterráneo", page: 181 },
-        { name: "Grick", cr: 2, crText: "2", habitat: "Plano Subterráneo", page: 182 },
-        { name: "Grick anciano", cr: 7, crText: "7", habitat: "Plano Subterráneo", page: 182 },
-        { name: "Grifo", cr: 2, crText: "2", habitat: "Montaña", page: 183 },
-        { name: "Grimlock", cr: 0.25, crText: "1/4", habitat: "Plano Subterráneo", page: 184 },
-        { name: "Guardia", cr: 0.125, crText: "1/8", habitat: "Urbano", page: 186 },
-        { name: "Guardián centauro", cr: 2, crText: "2", habitat: "Bosque", page: 50 },
-        { name: "Guardián escudo", cr: 7, crText: "7", habitat: "Urbano", page: 185 },
-        { name: "Guerrero bullywug", cr: 0.25, crText: "1/4", habitat: "Ciénaga", page: 41 },
-        { name: "Guerrero comandante", cr: 8, crText: "8", habitat: "Urbano", page: 188 },
-        { name: "Guerrero de infantería", cr: 0.5, crText: "1/2", habitat: "Urbano", page: 187 },
-        { name: "Guerrero githyanki", cr: 3, crText: "3", habitat: "Inframundo", page: 164 },
-        { name: "Guerrero gnoll", cr: 0.5, crText: "1/2", habitat: "Colinas", page: 170 },
-        { name: "Guerrero goblin", cr: 0.25, crText: "1/4", habitat: "Bosque", page: 172 },
-        { name: "Guerrero hobgoblin", cr: 0.5, crText: "1/2", habitat: "Colinas", page: 195 },
-        { name: "Guerrero kobold", cr: 0.125, crText: "1/8", habitat: "Plano Subterráneo", page: 212 },
-        { name: "Guerrero osgo", cr: 1, crText: "1", habitat: "Inframundo", page: 267 },
-        { name: "Guerrero sahuagin", cr: 0.5, crText: "1/2", habitat: "Acuático", page: 301 },
-        { name: "Guerrero veterano", cr: 3, crText: "3", habitat: "Urbano", page: 187 },
-        { name: "Guiverno", cr: 6, crText: "6", habitat: "Montaña", page: 189 },
-        { name: "Gul", cr: 1, crText: "1", habitat: "Inframundo", page: 190 },
-        { name: "Gul lacedón", cr: 1, crText: "1", habitat: "Acuático", page: 190 },
-        { name: "Gusano púrpura", cr: 15, crText: "15", habitat: "Plano Subterráneo", page: 191 },
-        { name: "Hada", cr: 0.25, crText: "1/4", habitat: "Bosque", page: 126 },
-        { name: "Halcón", cr: 0, crText: "0", habitat: "Bosque", page: 359 },
-        { name: "Halcón sangriento", cr: 0.125, crText: "1/8", habitat: "Montaña", page: 360 },
-        { name: "Hezrou", cr: 8, crText: "8", habitat: "Inframundo", page: 192 },
-    { name: "Hidra", cr: 8, crText: "8", habitat: "Ciénaga", page: 193 },
-    { name: "Hiena", cr: 0, crText: "0", habitat: "Desierto", page: 360 },
-    { name: "Hiena gigante", cr: 1, crText: "1", habitat: "Desierto", page: 360 },
-    { name: "Hobgoblin", cr: 0.5, crText: "1/2", habitat: "Colinas", page: 195 },
-    { name: "Homúnculo", cr: 0, crText: "0", habitat: "Urbano", page: 197 },
-    { name: "Hongo violador", cr: 0.25, crText: "1/4", habitat: "Plano Subterráneo", page: 245 },
-    { name: "Horca Marina", cr: 2, crText: "2", habitat: "Acuático", page: 198 },
-    { name: "Horripilante verdosa", cr: 3, crText: "3", habitat: "Ciénaga", page: 199 },
-    { name: "Huerco", cr: 0.25, crText: "1/4", habitat: "Inframundo", page: 200 },
-    { name: "Jabalí", cr: 0.25, crText: "1/4", habitat: "Bosque", page: 361 },
-    { name: "Jabalí gigante", cr: 2, crText: "2", habitat: "Bosque", page: 361 },
-    { name: "Jabalí verduzco", cr: 4, crText: "4", habitat: "Bosque", page: 201 },
-    { name: "Jackalwere", cr: 0.5, crText: "1/2", habitat: "Desierto", page: 203 },
-    { name: "Kuo-toa", cr: 0.25, crText: "1/4", habitat: "Plano Subterráneo", page: 217 },
-    { name: "Llama de sombras", cr: 2, crText: "2", habitat: "Inframundo", page: 220 },
-    { name: "Lanza de hielo", cr: 1, crText: "1", habitat: "Montaña", page: 223 },
-    { name: "Liche", cr: 21, crText: "21", habitat: "Inframundo", page: 224 },
-    { name: "Lobo", cr: 0.25, crText: "1/4", habitat: "Bosque", page: 361 },
-    { name: "Lobo terrible", cr: 1, crText: "1", habitat: "Bosque", page: 361 },
-    { name: "Manticora", cr: 3, crText: "3", habitat: "Montaña", page: 231 },
-    { name: "Medusa", cr: 6, crText: "6", habitat: "Plano Subterráneo", page: 238 },
-    { name: "Mimeto", cr: 2, crText: "2", habitat: "Plano Subterráneo", page: 242 },
-    { name: "Minotauro", cr: 3, crText: "3", habitat: "Plano Subterráneo", page: 243 },
-    { name: "Momia", cr: 3, crText: "3", habitat: "Desierto", page: 246 },
-    { name: "Naga de los sepulcros", cr: 8, crText: "8", habitat: "Plano Subterráneo", page: 251 },
-    { name: "Ogro", cr: 2, crText: "2", habitat: "Colinas", page: 260 },
-    { name: "Oso buho", cr: 3, crText: "3", habitat: "Bosque", page: 268 },
-    { name: "Peryton", cr: 2, crText: "2", habitat: "Montaña", page: 274 },
-    { name: "Pseudodragón", cr: 0.25, crText: "1/4", habitat: "Urbano", page: 284 },
-    { name: "Quimera", cr: 6, crText: "6", habitat: "Montaña", page: 288 },
-    { name: "Rakshasa", cr: 13, crText: "13", habitat: "Urbano", page: 290 },
-    { name: "Remorhaz", cr: 11, crText: "11", habitat: "Montaña", page: 293 },
-    { name: "Roc", cr: 11, crText: "11", habitat: "Montaña", page: 298 },
-    { name: "Sátiro", cr: 0.5, crText: "1/2", habitat: "Bosque", page: 304 },
-    { name: "Sombra", cr: 0.5, crText: "1/2", habitat: "Inframundo", page: 310 },
-    { name: "Tarasca", cr: 30, crText: "30", habitat: "Cualquiera", page: 322 },
-    { name: "Troll", cr: 5, crText: "5", habitat: "Ciénaga", page: 327 },
-    { name: "Unicornio", cr: 5, crText: "5", habitat: "Bosque", page: 330 },
-    { name: "Vampiro", cr: 13, crText: "13", habitat: "Urbano", page: 331 },
-    { name: "Xorn", cr: 5, crText: "5", habitat: "Plano Subterráneo", page: 341 },
-    { name: "Yeti", cr: 3, crText: "3", habitat: "Montaña", page: 342 },
-    { name: "Zombi", cr: 0.25, crText: "1/4", habitat: "Inframundo", page: 346 }
+
+<script>
+let searchTimeout = null;
+let currentMonsters = [];
+
+// Diccionario de términos técnicos de D&D para traducción rápida y exacta
+const dndDictionary = {
+    // Tipos
+    "aberration": "Aberración", "beast": "Bestia", "celestial": "Celestial", "construct": "Constructo",
+    "dragon": "Dragón", "elemental": "Elemental", "fey": "Incorpóreo/Hada", "fiend": "Infernal",
+    "giant": "Gigante", "humanoid": "Humanoide", "monstrosity": "Monstruosidad", "ooze": "Cieno",
+    "plant": "Planta", "undead": "No-muerto",
+    // Tamaños
+    "Tiny": "Diminuto", "Small": "Pequeño", "Medium": "Mediano", "Large": "Grande", "Huge": "Enorme", "Gargantuan": "Gargantesco",
+    // Alineamientos
+    "lawful good": "Legal Bueno", "neutral good": "Neutral Bueno", "chaotic good": "Caótico Bueno",
+    "lawful neutral": "Legal Neutral", "neutral": "Neutral", "chaotic neutral": "Caótico Neutral",
+    "lawful evil": "Legal Maligno", "neutral evil": "Neutral Maligno", "chaotic evil": "Caótico Maligno",
+    "unaligned": "Sin alineamiento",
+    // Nombres de acciones habituales
+    "Multiattack": "Multiataque", "Bite": "Mordisco", "Claw": "Garra", "Claws": "Garras", "Tail": "Cola", "Gore": "Cornada"
+};
+
+// Formateador con signo (+/-) para modificadores
+function formatMod(score) {
+    const mod = Math.floor((score - 10) / 2);
+    return `${score} (${mod >= 0 ? '+' + mod : mod})`;
+}
+
+// Búsqueda en API con retardo para no saturar al escribir (Debounce)
+function debounceSearch() {
+    clearTimeout(searchTimeout);
+    searchTimeout = setTimeout(() => {
+        const query = document.getElementById('searchInput').value.trim();
+        fetchMonsterList(query);
+    }, 400);
+}
+
+// 1. Obtener lista de monstruos mediante la API de Open5e
+async function fetchMonsterList(query = '') {
+    const listElement = document.getElementById('monsterList');
+    listElement.innerHTML = '<li class="monster-item">Cargando resultados...</li>';
+
+    try {
+        const url = query 
+            ? `https://api.open5e.com/monsters/?search=${encodeURIComponent(query)}&limit=30`
+            : `https://api.open5e.com/monsters/?limit=30`;
         
-    ];
+        const response = await fetch(url);
+        const data = await response.json();
+        currentMonsters = data.results;
 
-    document.addEventListener('DOMContentLoaded', () => {
-        const searchInput = document.getElementById('search-name');
-        const habitatSelect = document.getElementById('filter-habitat');
-        const crSelect = document.getElementById('filter-cr');
-        const monsterGrid = document.getElementById('monster-grid');
-        const statsBar = document.getElementById('stats-bar');
-
-        function getPlaceholderUrl(monsterName) {
-            return `https://placehold.co/400x300/7a200d/ffffff?text=${encodeURIComponent(monsterName)}`;
+        listElement.innerHTML = '';
+        if (currentMonsters.length === 0) {
+            listElement.innerHTML = '<li class="monster-item">No se encontraron monstruos.</li>';
+            return;
         }
 
-        function renderMonsters() {
-            const nameQuery = searchInput ? searchInput.value.toLowerCase().trim() : '';
-            const selectedHabitat = habitatSelect ? habitatSelect.value : 'all';
-            const selectedCr = crSelect ? crSelect.value : 'all';
+        currentMonsters.forEach(monster => {
+            const li = document.createElement('li');
+            li.className = 'monster-item';
+            li.id = `item-${monster.slug}`;
+            li.onclick = () => loadAndTranslateMonster(monster.slug);
+            li.innerHTML = `
+                <span>${monster.name}</span>
+                <span class="monster-cr">CR ${monster.challenge_rating}</span>
+            `;
+            listElement.appendChild(li);
+        });
 
-            const filtered = monsters.filter(m => {
-                const matchesName = m.name.toLowerCase().includes(nameQuery);
-                const matchesHabitat = selectedHabitat === 'all' || m.habitat === selectedHabitat;
-                
-                let matchesCr = true;
-                if (selectedCr !== 'all') {
-                    const targetCr = parseFloat(selectedCr);
-                    if (targetCr === 20) {
-                        matchesCr = m.cr >= 20;
-                    } else {
-                        matchesCr = m.cr === targetCr;
-                    }
-                }
+    } catch (error) {
+        console.error("Error cargando la lista:", error);
+        listElement.innerHTML = '<li class="monster-item">Error al conectar con la API.</li>';
+    }
+}
 
-                return matchesName && matchesHabitat && matchesCr;
-            });
+// API de traducción de texto público (MyMemory)
+async function translate(text) {
+    if (!text || text.trim() === '') return '';
+    try {
+        const res = await fetch(`https://api.mymemory.translated.net/get?q=${encodeURIComponent(text)}&langpair=en|es`);
+        const data = await res.json();
+        return data.responseData.translatedText || text;
+    } catch (e) {
+        return text; // Si falla la red de traducción, retorna en inglés
+    }
+}
 
-            if (statsBar) {
-                statsBar.textContent = `Mostrando ${filtered.length} de ${monsters.length} criaturas extraídas del índice`;
-            }
+// 2. Cargar ficha y traducir dinámicamente
+async function loadAndTranslateMonster(slug) {
+    const monster = currentMonsters.find(m => m.slug === slug);
+    if (!monster) return;
 
-            if (!monsterGrid) return;
+    // Actualizar selección visual
+    document.querySelectorAll('.monster-item').forEach(el => el.classList.remove('active'));
+    document.getElementById(`item-${slug}`)?.classList.add('active');
 
-            if (filtered.length === 0) {
-                monsterGrid.innerHTML = `<div class="no-results">No se encontraron monstruos con los filtros seleccionados.</div>`;
-                return;
-            }
+    // Mostrar pantalla de carga
+    const loader = document.getElementById('loading');
+    loader.style.display = 'flex';
 
-            monsterGrid.innerHTML = filtered.map(m => {
-                const imageUrl = getPlaceholderUrl(m.name);
-                return `
-                <div class="monster-card">
-                    <div class="monster-image-container">
-                        <img 
-                            class="monster-image" 
-                            src="${imageUrl}" 
-                            alt="Ilustración de ${m.name}"
-                            loading="lazy"
-                        />
-                    </div>
-                    <div class="monster-content">
-                        <div>
-                            <div class="monster-name">${m.name}</div>
-                            <div class="monster-info">
-                                <strong>Página:</strong> ${m.page}
-                            </div>
-                        </div>
-                        <div class="tag-container">
-                            <span class="tag">CD: ${m.crText}</span>
-                            <span class="tag">${m.habitat}</span>
-                        </div>
-                    </div>
-                </div>
-                `;
-            }).join('');
-        }
+    // Traducir tipo, tamaño y alineamiento usando diccionario o API
+    const sizeEs = dndDictionary[monster.size] || monster.size;
+    const typeEs = dndDictionary[monster.type] || monster.type;
+    const alignEs = dndDictionary[monster.alignment] || await translate(monster.alignment);
 
-        if (searchInput) searchInput.addEventListener('input', renderMonsters);
-        if (habitatSelect) habitatSelect.addEventListener('change', renderMonsters);
-        if (crSelect) crSelect.addEventListener('change', renderMonsters);
+    // Traducir rasgos especiales y acciones en paralelo
+    const traitsPromises = (monster.special_abilities || []).map(async t => ({
+        name: dndDictionary[t.name] || t.name,
+        desc: await translate(t.desc)
+    }));
 
-        renderMonsters();
-    });
+    const actionsPromises = (monster.actions || []).map(async a => ({
+        name: dndDictionary[a.name] || a.name,
+        desc: await translate(a.desc)
+    }));
+
+    const descPromise = monster.desc ? translate(monster.desc) : Promise.resolve("Sin descripción extendida.");
+
+    const [translatedTraits, translatedActions, translatedDesc] = await Promise.all([
+        Promise.all(traitsPromises),
+        Promise.all(actionsPromises),
+        descPromise
+    ]);
+
+    // Renderizar la ficha traducida
+    const content = document.getElementById('content');
+    content.innerHTML = `
+        <div class="statblock-header">
+            <h2 class="statblock-title">${monster.name}</h2>
+            <div class="statblock-meta">${sizeEs} ${typeEs}, ${alignEs}</div>
+        </div>
+        <div class="taper-line"></div>
+
+        <div class="property-line"><strong>Clase de Armadura:</strong> ${monster.armor_class} (${monster.armor_desc || 'natural'})</div>
+        <div class="property-line"><strong>Puntos de Golpe:</strong> ${monster.hit_points} (${monster.hit_dice})</div>
+        <div class="property-line"><strong>Velocidad:</strong> ${formatSpeed(monster.speed)}</div>
+
+        <table class="abilities-table">
+            <thead>
+                <tr>
+                    <th>FUE</th><th>DES</th><th>CON</th><th>INT</th><th>SAB</th><th>CAR</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>${formatMod(monster.strength)}</td>
+                    <td>${formatMod(monster.dexterity)}</td>
+                    <td>${formatMod(monster.constitution)}</td>
+                    <td>${formatMod(monster.intelligence)}</td>
+                    <td>${formatMod(monster.wisdom)}</td>
+                    <td>${formatMod(monster.charisma)}</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div class="property-line"><strong>Sentidos:</strong> ${monster.senses}</div>
+        <div class="property-line"><strong>Idiomas:</strong> ${monster.languages || '—'}</div>
+        <div class="property-line"><strong>Desafío (CR):</strong> ${monster.challenge_rating}</div>
+
+        <div class="taper-line"></div>
+
+        ${translatedTraits.map(t => `
+            <div class="action-block">
+                <span class="action-name">${t.name}.</span>${t.desc}
+            </div>
+        `).join('')}
+
+        ${translatedActions.length > 0 ? `<div class="section-header">Acciones</div>` : ''}
+        ${translatedActions.map(a => `
+            <div class="action-block">
+                <span class="action-name">${a.name}.</span>${a.desc}
+            </div>
+        `).join('')}
+
+        <div class="description-text">
+            <strong>Descripción:</strong> ${translatedDesc}
+        </div>
+    `;
+
+    loader.style.display = 'none';
+}
+
+// Formateador de velocidades (a pie, vuelo, natación)
+function formatSpeed(speedObj) {
+    if (!speedObj) return '0 ft.';
+    let parts = [];
+    if (speedObj.walk) parts.push(`${speedObj.walk} ft.`);
+    if (speedObj.fly) parts.push(`vuelo ${speedObj.fly} ft.`);
+    if (speedObj.swim) parts.push(`natación ${speedObj.swim} ft.`);
+    if (speedObj.climb) parts.push(`escalada ${speedObj.climb} ft.`);
+    return parts.join(', ') || '0 ft.';
+}
+
+// Inicialización
+window.onload = () => {
+    fetchMonsterList();
+};
 </script>
 
 </body>
