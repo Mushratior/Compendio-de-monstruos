@@ -304,8 +304,8 @@ async function fetchMonsterList(query = '') {
 
     try {
         const url = query 
-            ? `https://api.open5e.com/monsters/?search=${encodeURIComponent(query)}&limit=30`
-            : `https://api.open5e.com/monsters/?limit=30`;
+            ? `https://api.open5e.com/v1/monsters/?search=${encodeURIComponent(query)}&limit=30`
+            : `https://api.open5e.com/v1/monsters/?limit=30`;
         
         const response = await fetch(url);
         const data = await response.json();
