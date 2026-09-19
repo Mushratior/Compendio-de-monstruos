@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Compendio de Monstruos - D&D 5e (Auto-Traducción)</title>
+    <title>Compendio de Monstruos - D&D 5e (Traducción Completa)</title>
     <style>
         :root {
             --primary-red: #8b0000;
@@ -242,7 +242,7 @@
 <div class="container">
     <header>
         <h1>Compendio de Monstruos D&D 5e</h1>
-        <div class="subtitle">Búsqueda vía API Open5e & Traducción Automática al Español</div>
+        <div class="subtitle">Traducción Técnica Integrada (Open5e v1 API)</div>
     </header>
 
     <div class="app-layout">
@@ -252,9 +252,9 @@
         </div>
 
         <div class="statblock-container" id="statblockView">
-            <div id="loading" class="loading-overlay">Traduciendo datos del monstruo...</div>
+            <div id="loading" class="loading-overlay">Traduciendo ficha técnica...</div>
             <div id="content">
-                <div class="status-msg">Selecciona un monstruo de la lista para cargar y traducir su ficha.</div>
+                <div class="status-msg">Selecciona un monstruo de la lista para cargar su ficha en español.</div>
             </div>
         </div>
     </div>
@@ -264,31 +264,39 @@
 let searchTimeout = null;
 let currentMonsters = [];
 
-// Diccionario de términos técnicos de D&D para traducción rápida y exacta
+// Diccionario ampliado con Sentidos, Habilidades e Idiomas técnicos
 const dndDictionary = {
     // Tipos
     "aberration": "Aberración", "beast": "Bestia", "celestial": "Celestial", "construct": "Constructo",
     "dragon": "Dragón", "elemental": "Elemental", "fey": "Incorpóreo/Hada", "fiend": "Infernal",
     "giant": "Gigante", "humanoid": "Humanoide", "monstrosity": "Monstruosidad", "ooze": "Cieno",
     "plant": "Planta", "undead": "No-muerto",
+    
     // Tamaños
     "Tiny": "Diminuto", "Small": "Pequeño", "Medium": "Mediano", "Large": "Grande", "Huge": "Enorme", "Gargantuan": "Gargantesco",
-    // Alineamientos
-    "lawful good": "Legal Bueno", "neutral good": "Neutral Bueno", "chaotic good": "Caótico Bueno",
-    "lawful neutral": "Legal Neutral", "neutral": "Neutral", "chaotic neutral": "Caótico Neutral",
-    "lawful evil": "Legal Maligno", "neutral evil": "Neutral Maligno", "chaotic evil": "Caótico Maligno",
-    "unaligned": "Sin alineamiento",
-    // Nombres de acciones habituales
-    "Multiattack": "Multiataque", "Bite": "Mordisco", "Claw": "Garra", "Claws": "Garras", "Tail": "Cola", "Gore": "Cornada"
+    
+    // Sentidos
+    "darkvision": "visión en la oscuridad", "blindsight": "visión a ciegas", "tremorsense": "percepción de la vibración",
+    "truesight": "visión verdadera", "passive Perception": "Percepción pasiva",
+    
+    // Idiomas y conceptos comunes
+    "telepathy": "telepatía", "understands": "entiende", "but can't speak": "pero no puede hablar",
+    "all": "todos", "Common": "Común", "Elvish": "Élfico", "Dwarvish": "Enano", "Draconic": "Dracónico",
+    "Infernal": "Infernal", "Abyssal": "Abisal", "Goblin": "Goblin", "Orc": "Orco",
+    
+    // Armadura
+    "natural armor": "armadura natural", "shield": "escudo", "leather armor": "armadura de cuero",
+    
+    // Acciones comunes
+    "Multiattack": "Multiataque", "Bite": "Mordisco", "Claw": "Garra", "Claws": "Garras", 
+    "Tail": "Cola", "Gore": "Cornada", "Slam": "Golpe", "Greatsword": "Espadón"
 };
 
-// Formateador con signo (+/-) para modificadores
 function formatMod(score) {
     const mod = Math.floor((score - 10) / 2);
     return `${score} (${mod >= 0 ? '+' + mod : mod})`;
 }
 
-// Búsqueda en API con retardo para no saturar al escribir (Debounce)
 function debounceSearch() {
     clearTimeout(searchTimeout);
     searchTimeout = setTimeout(() => {
@@ -297,7 +305,7 @@ function debounceSearch() {
     }, 400);
 }
 
-// 1. Obtener lista de monstruos mediante la API de Open5e
+// 1. Obtener lista de monstruos actualizando la URL a /v1/monsters/
 async function fetchMonsterList(query = '') {
     const listElement = document.getElementById('monsterList');
     listElement.innerHTML = '<li class="monster-item">Cargando resultados...</li>';
@@ -335,7 +343,6 @@ async function fetchMonsterList(query = '') {
     }
 }
 
-// API de traducción de texto público (MyMemory)
 async function translate(text) {
     if (!text || text.trim() === '') return '';
     try {
@@ -343,29 +350,39 @@ async function translate(text) {
         const data = await res.json();
         return data.responseData.translatedText || text;
     } catch (e) {
-        return text; // Si falla la red de traducción, retorna en inglés
+        return text;
     }
 }
 
-// 2. Cargar ficha y traducir dinámicamente
+function replaceTechnicalTerms(str) {
+    if (!str) return '—';
+    let result = str;
+    for (const [key, val] of Object.entries(dndDictionary)) {
+        const regex = new RegExp(`\\b${key}\\b`, 'gi');
+        result = result.replace(regex, val);
+    }
+    return result;
+}
+
 async function loadAndTranslateMonster(slug) {
     const monster = currentMonsters.find(m => m.slug === slug);
     if (!monster) return;
 
-    // Actualizar selección visual
     document.querySelectorAll('.monster-item').forEach(el => el.classList.remove('active'));
     document.getElementById(`item-${slug}`)?.classList.add('active');
 
-    // Mostrar pantalla de carga
     const loader = document.getElementById('loading');
     loader.style.display = 'flex';
 
-    // Traducir tipo, tamaño y alineamiento usando diccionario o API
+    // Traducción de datos básicos
     const sizeEs = dndDictionary[monster.size] || monster.size;
     const typeEs = dndDictionary[monster.type] || monster.type;
     const alignEs = dndDictionary[monster.alignment] || await translate(monster.alignment);
+    const armorDescEs = replaceTechnicalTerms(monster.armor_desc || 'natural');
+    const sensesEs = replaceTechnicalTerms(monster.senses);
+    const languagesEs = replaceTechnicalTerms(monster.languages);
 
-    // Traducir rasgos especiales y acciones en paralelo
+    // Traducción de rasgos especiales y acciones en paralelo
     const traitsPromises = (monster.special_abilities || []).map(async t => ({
         name: dndDictionary[t.name] || t.name,
         desc: await translate(t.desc)
@@ -384,7 +401,6 @@ async function loadAndTranslateMonster(slug) {
         descPromise
     ]);
 
-    // Renderizar la ficha traducida
     const content = document.getElementById('content');
     content.innerHTML = `
         <div class="statblock-header">
@@ -393,7 +409,7 @@ async function loadAndTranslateMonster(slug) {
         </div>
         <div class="taper-line"></div>
 
-        <div class="property-line"><strong>Clase de Armadura:</strong> ${monster.armor_class} (${monster.armor_desc || 'natural'})</div>
+        <div class="property-line"><strong>Clase de Armadura:</strong> ${monster.armor_class} (${armorDescEs})</div>
         <div class="property-line"><strong>Puntos de Golpe:</strong> ${monster.hit_points} (${monster.hit_dice})</div>
         <div class="property-line"><strong>Velocidad:</strong> ${formatSpeed(monster.speed)}</div>
 
@@ -415,8 +431,8 @@ async function loadAndTranslateMonster(slug) {
             </tbody>
         </table>
 
-        <div class="property-line"><strong>Sentidos:</strong> ${monster.senses}</div>
-        <div class="property-line"><strong>Idiomas:</strong> ${monster.languages || '—'}</div>
+        <div class="property-line"><strong>Sentidos:</strong> ${sensesEs}</div>
+        <div class="property-line"><strong>Idiomas:</strong> ${languagesEs}</div>
         <div class="property-line"><strong>Desafío (CR):</strong> ${monster.challenge_rating}</div>
 
         <div class="taper-line"></div>
@@ -442,7 +458,6 @@ async function loadAndTranslateMonster(slug) {
     loader.style.display = 'none';
 }
 
-// Formateador de velocidades (a pie, vuelo, natación)
 function formatSpeed(speedObj) {
     if (!speedObj) return '0 ft.';
     let parts = [];
@@ -453,7 +468,6 @@ function formatSpeed(speedObj) {
     return parts.join(', ') || '0 ft.';
 }
 
-// Inicialización
 window.onload = () => {
     fetchMonsterList();
 };
